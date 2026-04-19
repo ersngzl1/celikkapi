@@ -83,6 +83,15 @@ export async function initDB() {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS images (
+        hash TEXT PRIMARY KEY,
+        data TEXT NOT NULL,
+        mime TEXT NOT NULL DEFAULT 'image/jpeg',
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
     // Seed products if empty
     const result = await sql`SELECT COUNT(*) as count FROM products`;
     const count = (result.rows[0] as any).count;
@@ -247,5 +256,21 @@ export const categoryQueries = {
 
   delete: async (id: number) => {
     await sql`DELETE FROM categories WHERE id = ${id}`;
+  },
+};
+
+// Image queries
+export const imageQueries = {
+  save: async (hash: string, data: string, mime: string) => {
+    await sql`
+      INSERT INTO images (hash, data, mime)
+      VALUES (${hash}, ${data}, ${mime})
+      ON CONFLICT (hash) DO NOTHING
+    `;
+  },
+
+  get: async (hash: string) => {
+    const result = await sql`SELECT data, mime FROM images WHERE hash = ${hash}`;
+    return result.rows?.[0];
   },
 };

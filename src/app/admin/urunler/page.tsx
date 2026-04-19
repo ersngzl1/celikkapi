@@ -119,17 +119,18 @@ export default function UrunlerPage() {
   });
 
   const openNew = () => {
-    setForm({ ...emptyForm, id: Date.now() });
+    // PostgreSQL INTEGER max ~2.1 milyar, Date.now() 1.7 trilyon, taşma yapar
+    const newId = Math.floor(Math.random() * 2000000000);
+    setForm({ ...emptyForm, id: newId });
     setEditItem(null);
+    setUploadPreview(null);
     setShowForm(true);
   };
 
   const openEdit = (door: DoorForm) => {
-    setForm({
-      ...door,
-      features: [...door.features],
-    });
+    setForm({ ...door, features: [...door.features] });
     setEditItem(door);
+    setUploadPreview(null);
     setShowForm(true);
   };
 
@@ -190,15 +191,19 @@ export default function UrunlerPage() {
     }
   };
 
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Dosya boyutu 5MB'dan küçük olmalıdır");
+    if (file.size > 3 * 1024 * 1024) {
+      alert("Dosya boyutu 3MB'dan küçük olmalıdır");
       return;
     }
 
+    setUploading(true);
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -208,15 +213,19 @@ export default function UrunlerPage() {
         body: formData,
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        setForm((prev) => ({ ...prev, image: data.image }));
+      const data = await res.json();
+
+      if (res.ok && data.url) {
+        setForm((prev) => ({ ...prev, image: data.url }));
+        setUploadPreview(data.preview); // base64 preview sadece göstermek için
       } else {
-        alert("Resim yükleme başarısız");
+        alert(`Resim yüklenemedi: ${data.error || "Bilinmeyen hata"}`);
       }
     } catch (error) {
       console.error("Upload error:", error);
       alert("Yükleme sırasında hata oluştu");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -636,18 +645,19 @@ export default function UrunlerPage() {
                   <label className="block text-xs font-semibold text-slate-600 mb-2">
                     Resim Yükle
                   </label>
-                  <div className="flex gap-2 mb-3">
+                  <div className="flex items-center gap-3 p-3 bg-slate-50 border border-dashed border-slate-300 rounded-lg">
                     <input
                       type="file"
                       accept="image/png,image/jpeg,image/webp"
                       onChange={handleImageUpload}
-                      className="flex-1 px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500"
+                      disabled={uploading}
+                      className="flex-1 text-sm text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 disabled:opacity-50"
                     />
-                    <Upload className="w-4 h-4 text-slate-400 mt-3" />
+                    {uploading && <Loader2 className="w-4 h-4 animate-spin text-red-500" />}
                   </div>
-                  {form.image && form.image.startsWith("data:") && (
-                    <div className="mb-3 p-2 bg-green-50 rounded text-xs text-green-700">
-                      ✓ Resim yüklendi ve kaydedilecek
+                  {form.image && form.image.startsWith("/api/images/") && (
+                    <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-xs text-green-700 flex items-center gap-2">
+                      <span className="text-green-500">✓</span> Resim yüklendi
                     </div>
                   )}
                 </div>
@@ -673,27 +683,17 @@ export default function UrunlerPage() {
                   </div>
                 </div>
 
-                {form.image && (
+                {(uploadPreview || form.image) && (
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-slate-600 mb-2">
                       Resim Önizlemesi
                     </label>
-                    <div className="relative w-32 h-40 rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
-                      {form.image.startsWith("data:") ? (
-                        <img
-                          src={form.image}
-                          alt="Preview"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <Image
-                          src={form.image}
-                          alt="Preview"
-                          fill
-                          className="object-cover"
-                          sizes="128px"
-                        />
-                      )}
+                    <div className="relative w-28 h-36 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
+                      {uploadPreview ? (
+                        <img src={uploadPreview} alt="Preview" className="w-full h-full object-cover" />
+                      ) : form.image && !form.image.startsWith("data:") ? (
+                        <Image src={form.image} alt="Preview" fill className="object-cover" sizes="112px" />
+                      ) : null}
                     </div>
                   </div>
                 )}

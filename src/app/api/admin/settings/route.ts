@@ -1,29 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import { isAuthenticated } from "@/lib/auth";
 import { initDB } from "@/lib/db-vercel";
+import { sql } from "@vercel/postgres";
 
-const SETTINGS_FILE = path.join(process.cwd(), "settings.json");
-
-function getSettings() {
+async function getSettings() {
   try {
-    if (fs.existsSync(SETTINGS_FILE)) {
-      return JSON.parse(fs.readFileSync(SETTINGS_FILE, "utf-8"));
-    }
-  } catch {}
-  return {
-    replicateApiKey: "",
-    imagePrompt: "Bu fotoğraftaki kapıyı, verilen çelik kapı modeli ile değiştir. Kapı modelini fotoğraftaki kapının yerine doğal bir şekilde yerleştir. Işıklandırma ve perspektif uyumlu olsun.",
-    logo: "",
-    favicon: "",
-    whatsappNumber: "+903221234567",
-    whatsappMessage: "Merhabalar, çelik kapı hakkında bilgi almak istiyorum.",
-  };
+    const result = await sql`SELECT key, value FROM settings`;
+    const settings: Record<string, unknown> = {};
+    result.rows?.forEach((row: any) => {
+      try {
+        settings[row.key] = JSON.parse(row.value);
+      } catch {
+        settings[row.key] = row.value;
+      }
+    });
+    return settings;
+  } catch {
+    return {};
+  }
 }
 
-function saveSettings(data: Record<string, unknown>) {
-  fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 2), "utf-8");
+async function saveSettings(data: Record<string, unknown>) {
+  for (const [key, value] of Object.entries(data)) {
+    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    try {
+      await sql`
+        INSERT INTO settings (key, value) VALUES (${key}, ${stringValue})
+        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updatedAt = NOW()
+      `;
+    } catch (error) {
+      console.error(`Error saving setting ${key}:`, error);
+    }
+  }
 }
 
 // Allowed setting keys to prevent arbitrary data injection
@@ -45,7 +53,8 @@ export async function HEAD(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const settings = getSettings();
+  await initDB();
+  const settings = await getSettings();
 
   // Public fields that the frontend needs (logo, whatsapp)
   const isAdmin = isAuthenticated(req);
@@ -53,7 +62,8 @@ export async function GET(req: NextRequest) {
   if (!isAdmin) {
     // Only return public-safe fields
     return NextResponse.json({
-      logo: settings.logo || "",
+      logoLight: settings.logoLight || "",
+      logoDark: settings.logoDark || "",
       favicon: settings.favicon || "",
       whatsappNumber: settings.whatsappNumber || "",
       whatsappMessage: settings.whatsappMessage || "",
@@ -63,7 +73,7 @@ export async function GET(req: NextRequest) {
   // Admin: return all, but mask API key
   const masked = { ...settings };
   if (masked.replicateApiKey) {
-    const key = masked.replicateApiKey;
+    const key = String(masked.replicateApiKey);
     masked.replicateApiKey = key.slice(0, 6) + "..." + key.slice(-4);
     masked.hasApiKey = true;
   } else {
@@ -80,7 +90,7 @@ export async function POST(req: NextRequest) {
   try {
     await initDB();
     const body = await req.json();
-    const current = getSettings();
+    const current = await getSettings();
 
     // Only allow known keys
     const sanitized: Record<string, unknown> = {};
@@ -100,9 +110,10 @@ export async function POST(req: NextRequest) {
     }
 
     const updated = { ...current, ...sanitized };
-    saveSettings(updated);
+    await saveSettings(updated);
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Settings error:", error);
     return NextResponse.json({ error: "Gecersiz istek" }, { status: 400 });
   }
 }

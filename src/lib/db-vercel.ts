@@ -65,6 +65,24 @@ export async function initDB() {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS settings (
+        id SERIAL PRIMARY KEY,
+        key TEXT UNIQUE NOT NULL,
+        value TEXT,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        value TEXT UNIQUE NOT NULL,
+        label TEXT NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
     // Seed products if empty
     const result = await sql`SELECT COUNT(*) as count FROM products`;
     const count = (result.rows[0] as any).count;

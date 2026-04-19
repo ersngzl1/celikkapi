@@ -338,7 +338,7 @@ export default function UrunlerPage() {
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       {door.image && (
-                        <div className="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-slate-200 bg-slate-100">
+                        <div className="relative w-12 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-slate-200 bg-slate-100">
                           {door.image.startsWith("data:") ? (
                             <img
                               src={door.image}
@@ -677,7 +677,7 @@ export default function UrunlerPage() {
                     <label className="block text-xs font-semibold text-slate-600 mb-2">
                       Resim Önizlemesi
                     </label>
-                    <div className="w-32 h-40 rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
+                    <div className="relative w-32 h-40 rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
                       {form.image.startsWith("data:") ? (
                         <img
                           src={form.image}
@@ -691,9 +691,6 @@ export default function UrunlerPage() {
                           fill
                           className="object-cover"
                           sizes="128px"
-                          onError={() => {
-                            // Fallback for broken images
-                          }}
                         />
                       )}
                     </div>

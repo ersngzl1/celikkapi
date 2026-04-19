@@ -69,6 +69,7 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "default",
     "apple-mobile-web-app-title": "Best Kapı",
+    "google-site-verification": "google-site-verification-code-here",
   },
 };
 
@@ -128,15 +129,6 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* Google Tag Manager (noscript) */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXXXXX"
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
         {/* Theme Script */}
         <script
           dangerouslySetInnerHTML={{

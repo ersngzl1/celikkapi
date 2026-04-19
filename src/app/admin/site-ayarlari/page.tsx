@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Save, Phone, MapPin, Clock, Globe, Shield, CheckCircle2, AlertCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Save, Phone, MapPin, Clock, Globe, Shield, CheckCircle2, AlertCircle, Upload } from "lucide-react";
 
 interface SiteSettings {
   companyName: string;
@@ -56,6 +56,7 @@ export default function SiteAyarlariPage() {
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"general" | "contact" | "social" | "seo">("general");
+  const [logos, setLogos] = useState<{ light: string | null; dark: string | null }>({ light: null, dark: null });
 
   const handleSave = async () => {
     setLoading(true);
@@ -147,6 +148,27 @@ export default function SiteAyarlariPage() {
                   </label>
                 ))}
               </div>
+            </div>
+
+            <div className="pt-4 border-t border-slate-200">
+              <h4 className="text-xs font-semibold text-slate-800 mb-3">🎨 Logo Ayarları</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center">
+                  <div className="text-2xl mb-2">☀️</div>
+                  <p className="text-xs font-semibold text-slate-600 mb-2">Light Mode Logo</p>
+                  <img src="/uploads/logo.png" alt="Light Logo" className="w-16 h-auto mx-auto mb-2 rounded" />
+                  <p className="text-[10px] text-slate-500">Dosya: /uploads/logo.png</p>
+                </div>
+                <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center">
+                  <div className="text-2xl mb-2">🌙</div>
+                  <p className="text-xs font-semibold text-slate-600 mb-2">Dark Mode Logo</p>
+                  <img src="/uploads/logo-dark.png" alt="Dark Logo" className="w-16 h-auto mx-auto mb-2 rounded bg-slate-800 p-2" />
+                  <p className="text-[10px] text-slate-500">Dosya: /uploads/logo-dark.png</p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-500 mt-3 p-2 bg-blue-50 rounded">
+                💡 Logolarını değiştirmek için /uploads/logo.png ve /uploads/logo-dark.png dosyalarını değiştir
+              </p>
             </div>
           </div>
         )}

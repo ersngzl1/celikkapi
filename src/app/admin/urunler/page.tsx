@@ -597,19 +597,29 @@ export default function UrunlerPage() {
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-slate-600 mb-1">
-                    Görsel URL'si
+                    Görsel Seç
                   </label>
-                  <input
+                  <select
                     value={form.image}
                     onChange={(e) =>
                       setForm((p) => ({ ...p, image: e.target.value }))
                     }
                     className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500"
-                    placeholder="Örnek: /doors/celik-1.jpg"
-                  />
-                  <p className="text-xs text-slate-500 mt-2 text-slate-600">
-                    💡 <strong>Mevcut resimler:</strong> /doors/celik-1.jpg - celik-8.jpg, /doors/oda-1.jpg - oda-4.jpg
-                  </p>
+                  >
+                    <option value="">-- Görsel Seç --</option>
+                    <option value="/doors/celik-1.jpg">🚪 Çelik Kapı 1</option>
+                    <option value="/doors/celik-2.jpg">🚪 Çelik Kapı 2</option>
+                    <option value="/doors/celik-3.jpg">🚪 Çelik Kapı 3</option>
+                    <option value="/doors/celik-4.jpg">🚪 Çelik Kapı 4</option>
+                    <option value="/doors/celik-5.jpg">🚪 Çelik Kapı 5</option>
+                    <option value="/doors/celik-6.jpg">🚪 Çelik Kapı 6</option>
+                    <option value="/doors/celik-7.jpg">🚪 Çelik Kapı 7</option>
+                    <option value="/doors/celik-8.jpg">🚪 Çelik Kapı 8</option>
+                    <option value="/doors/oda-1.jpg">🏠 Oda Kapısı 1</option>
+                    <option value="/doors/oda-2.jpg">🏠 Oda Kapısı 2</option>
+                    <option value="/doors/oda-3.jpg">🏠 Oda Kapısı 3</option>
+                    <option value="/doors/oda-4.jpg">🏠 Oda Kapısı 4</option>
+                  </select>
                 </div>
               </div>
 

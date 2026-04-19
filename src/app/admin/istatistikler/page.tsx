@@ -1,0 +1,286 @@
+"use client";
+
+import {
+  BarChart3, TrendingUp, Eye, Users, MousePointerClick, Brain,
+  Phone, ArrowUp, ArrowDown, Globe, Smartphone, Monitor,
+  Calendar, Clock, Package, Star,
+} from "lucide-react";
+
+const monthlyStats = [
+  { label: "Toplam Görüntülenme", value: "12,847", change: "+18%", up: true, icon: Eye, color: "bg-red-500" },
+  { label: "Tekil Ziyaretçi", value: "6,234", change: "+12%", up: true, icon: Users, color: "bg-slate-700" },
+  { label: "WhatsApp Tıklama", value: "487", change: "+32%", up: true, icon: MousePointerClick, color: "bg-red-600" },
+  { label: "AI Kullanım", value: "312", change: "+45%", up: true, icon: Brain, color: "bg-slate-800" },
+  { label: "Telefon Arama", value: "89", change: "-5%", up: false, icon: Phone, color: "bg-red-500" },
+  { label: "Form Gönderimi", value: "124", change: "+22%", up: true, icon: BarChart3, color: "bg-slate-700" },
+];
+
+const weeklyData = [
+  { day: "Pzt", views: 420, visitors: 210 },
+  { day: "Sal", views: 380, visitors: 190 },
+  { day: "Car", views: 510, visitors: 260 },
+  { day: "Per", views: 470, visitors: 235 },
+  { day: "Cum", views: 550, visitors: 280 },
+  { day: "Cmt", views: 620, visitors: 310 },
+  { day: "Paz", views: 340, visitors: 170 },
+];
+
+const topPages = [
+  { page: "Ana Sayfa", views: 4280, percentage: 33 },
+  { page: "Katalog", views: 3120, percentage: 24 },
+  { page: "Vega Modern Detay", views: 1540, percentage: 12 },
+  { page: "İletişim", views: 1280, percentage: 10 },
+  { page: "AI Deneme", views: 980, percentage: 8 },
+  { page: "Hakkımızda", views: 720, percentage: 6 },
+  { page: "Titan Pro Detay", views: 540, percentage: 4 },
+  { page: "Atlas Guard Detay", views: 387, percentage: 3 },
+];
+
+const deviceStats = [
+  { label: "Mobil", value: 68, icon: Smartphone, color: "bg-red-500" },
+  { label: "Masaüstü", value: 28, icon: Monitor, color: "bg-slate-700" },
+  { label: "Tablet", value: 4, icon: Globe, color: "bg-slate-400" },
+];
+
+const trafficSources = [
+  { source: "Google Arama", value: 52, color: "bg-red-500" },
+  { source: "Direkt Giriş", value: 24, color: "bg-slate-700" },
+  { source: "Sosyal Medya", value: 14, color: "bg-red-400" },
+  { source: "Referans", value: 7, color: "bg-slate-500" },
+  { source: "Diğer", value: 3, color: "bg-slate-300" },
+];
+
+const popularProducts = [
+  { name: "Vega Modern", views: 1540, inquiries: 128, whatsapp: 86, conversion: "8.2%" },
+  { name: "Titan Pro", views: 1280, inquiries: 98, whatsapp: 72, conversion: "7.6%" },
+  { name: "Atlas Guard", views: 980, inquiries: 79, whatsapp: 58, conversion: "8.1%" },
+  { name: "Nova Elite", views: 840, inquiries: 63, whatsapp: 45, conversion: "7.5%" },
+  { name: "Fortress Max", views: 720, inquiries: 52, whatsapp: 38, conversion: "7.2%" },
+];
+
+export default function IstatistiklerPage() {
+  const maxViews = Math.max(...weeklyData.map(d => d.views));
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-slate-800">İstatistikler</h2>
+          <p className="text-sm text-slate-500 mt-0.5">Site trafiği ve kullanıcı analizleri</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="px-3 py-1.5 text-xs font-semibold bg-red-600 text-white rounded-lg">Bu Ay</button>
+          <button className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">Geçen Ay</button>
+          <button className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">3 Ay</button>
+          <button className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">Yıl</button>
+        </div>
+      </div>
+
+      {/* Main Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        {monthlyStats.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div key={stat.label} className="bg-white rounded-xl p-5 border border-slate-200">
+              <div className="flex items-center justify-between mb-3">
+                <div className={`w-10 h-10 rounded-lg ${stat.color} flex items-center justify-center`}>
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+                <span className={`flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                  stat.up ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50"
+                }`}>
+                  {stat.up ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+                  {stat.change}
+                </span>
+              </div>
+              <div className="text-2xl font-bold text-slate-800">{stat.value}</div>
+              <div className="text-xs text-slate-500 mt-0.5">{stat.label}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Weekly Chart */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-5">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-bold text-slate-800 flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-red-500" /> Haftalik Trafik
+          </h3>
+          <div className="flex items-center gap-4 text-xs">
+            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-red-500" /> Goruntulenme</span>
+            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-300" /> Ziyaretci</span>
+          </div>
+        </div>
+        <div className="flex items-end gap-3 h-48">
+          {weeklyData.map((d) => (
+            <div key={d.day} className="flex-1 flex flex-col items-center gap-1">
+              <div className="w-full flex flex-col items-center gap-1" style={{ height: "180px" }}>
+                <div className="w-full flex items-end justify-center gap-1 h-full">
+                  <div
+                    className="w-5 bg-red-500/80 rounded-t hover:bg-red-500 transition-colors cursor-default"
+                    style={{ height: `${(d.views / maxViews) * 100}%` }}
+                    title={`${d.views} goruntulenme`}
+                  />
+                  <div
+                    className="w-5 bg-slate-300 rounded-t hover:bg-slate-400 transition-colors cursor-default"
+                    style={{ height: `${(d.visitors / maxViews) * 100}%` }}
+                    title={`${d.visitors} ziyaretci`}
+                  />
+                </div>
+              </div>
+              <span className="text-[11px] text-slate-500 font-medium">{d.day}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Top Pages */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200">
+          <div className="p-5 border-b border-slate-100">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-red-500" /> En Cok Ziyaret Edilen Sayfalar
+            </h3>
+          </div>
+          <div className="divide-y divide-slate-50">
+            {topPages.map((p, i) => (
+              <div key={p.page} className="flex items-center gap-4 px-5 py-3 hover:bg-slate-50 transition-colors">
+                <span className="w-6 h-6 rounded-full bg-red-100 text-red-600 text-xs font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold text-slate-800">{p.page}</div>
+                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1.5">
+                    <div className="h-full bg-red-500 rounded-full" style={{ width: `${p.percentage}%` }} />
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <div className="text-sm font-bold text-slate-800">{p.views.toLocaleString()}</div>
+                  <div className="text-[10px] text-slate-400">%{p.percentage}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right sidebar */}
+        <div className="space-y-4">
+          {/* Device Stats */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <h3 className="font-bold text-slate-800 mb-4">Cihaz Dagilimi</h3>
+            <div className="space-y-3">
+              {deviceStats.map((d) => {
+                const Icon = d.icon;
+                return (
+                  <div key={d.label} className="flex items-center gap-3">
+                    <Icon className="w-4 h-4 text-slate-400" />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-slate-600 font-medium">{d.label}</span>
+                        <span className="text-xs font-bold text-slate-800">%{d.value}</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div className={`h-full ${d.color} rounded-full`} style={{ width: `${d.value}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Traffic Sources */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <h3 className="font-bold text-slate-800 mb-4">Trafik Kaynaklari</h3>
+            <div className="space-y-3">
+              {trafficSources.map((s) => (
+                <div key={s.source} className="flex items-center gap-3">
+                  <div className={`w-2.5 h-2.5 rounded-full ${s.color} flex-shrink-0`} />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-slate-600 font-medium">{s.source}</span>
+                      <span className="text-xs font-bold text-slate-800">%{s.value}</span>
+                    </div>
+                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className={`h-full ${s.color} rounded-full`} style={{ width: `${s.value}%` }} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Product Performance */}
+      <div className="bg-white rounded-2xl border border-slate-200">
+        <div className="p-5 border-b border-slate-100">
+          <h3 className="font-bold text-slate-800 flex items-center gap-2">
+            <Package className="w-4 h-4 text-red-500" /> Urun Performansi
+          </h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="text-[11px] text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                <th className="text-left py-3 px-5 font-semibold">#</th>
+                <th className="text-left py-3 px-5 font-semibold">Urun</th>
+                <th className="text-center py-3 px-5 font-semibold">Goruntulenme</th>
+                <th className="text-center py-3 px-5 font-semibold">Sorgu</th>
+                <th className="text-center py-3 px-5 font-semibold">WhatsApp</th>
+                <th className="text-center py-3 px-5 font-semibold">Donusum</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {popularProducts.map((p, i) => (
+                <tr key={p.name} className="hover:bg-slate-50 transition-colors">
+                  <td className="py-3 px-5">
+                    <span className="w-6 h-6 rounded-full bg-red-100 text-red-600 text-xs font-bold flex items-center justify-center">{i + 1}</span>
+                  </td>
+                  <td className="py-3 px-5 text-sm font-semibold text-slate-800">{p.name}</td>
+                  <td className="py-3 px-5 text-center text-sm text-slate-600">{p.views.toLocaleString()}</td>
+                  <td className="py-3 px-5 text-center text-sm text-slate-600">{p.inquiries}</td>
+                  <td className="py-3 px-5 text-center text-sm text-slate-600">{p.whatsapp}</td>
+                  <td className="py-3 px-5 text-center">
+                    <span className="text-sm font-bold text-green-600">{p.conversion}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Quick Stats Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl p-5 border border-slate-200">
+          <div className="flex items-center gap-2 mb-2">
+            <Clock className="w-4 h-4 text-slate-400" />
+            <span className="text-xs text-slate-500 font-medium">Ort. Oturum Suresi</span>
+          </div>
+          <div className="text-xl font-bold text-slate-800">2dk 45sn</div>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-slate-200">
+          <div className="flex items-center gap-2 mb-2">
+            <Eye className="w-4 h-4 text-slate-400" />
+            <span className="text-xs text-slate-500 font-medium">Sayfa/Oturum</span>
+          </div>
+          <div className="text-xl font-bold text-slate-800">3.4</div>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-slate-200">
+          <div className="flex items-center gap-2 mb-2">
+            <ArrowDown className="w-4 h-4 text-slate-400" />
+            <span className="text-xs text-slate-500 font-medium">Hemen Cikma</span>
+          </div>
+          <div className="text-xl font-bold text-slate-800">%38</div>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-slate-200">
+          <div className="flex items-center gap-2 mb-2">
+            <Star className="w-4 h-4 text-slate-400" />
+            <span className="text-xs text-slate-500 font-medium">Geri Donus Orani</span>
+          </div>
+          <div className="text-xl font-bold text-slate-800">%24</div>
+        </div>
+      </div>
+    </div>
+  );
+}

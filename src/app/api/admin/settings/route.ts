@@ -1,0 +1,102 @@
+import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import { isAuthenticated } from "@/lib/auth";
+import { initDB } from "@/lib/db-vercel";
+
+const SETTINGS_FILE = path.join(process.cwd(), "settings.json");
+
+function getSettings() {
+  try {
+    if (fs.existsSync(SETTINGS_FILE)) {
+      return JSON.parse(fs.readFileSync(SETTINGS_FILE, "utf-8"));
+    }
+  } catch {}
+  return {
+    replicateApiKey: "",
+    imagePrompt: "Bu fotoğraftaki kapıyı, verilen çelik kapı modeli ile değiştir. Kapı modelini fotoğraftaki kapının yerine doğal bir şekilde yerleştir. Işıklandırma ve perspektif uyumlu olsun.",
+    logo: "",
+    favicon: "",
+    whatsappNumber: "+903221234567",
+    whatsappMessage: "Merhabalar, çelik kapı hakkında bilgi almak istiyorum.",
+  };
+}
+
+function saveSettings(data: Record<string, unknown>) {
+  fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 2), "utf-8");
+}
+
+// Allowed setting keys to prevent arbitrary data injection
+const ALLOWED_KEYS = new Set([
+  "replicateApiKey", "imagePrompt", "logo", "favicon",
+  "whatsappNumber", "whatsappMessage",
+  "metaTitle", "metaDescription", "metaKeywords",
+  "ogTitle", "ogDescription", "ogImage",
+  "headerCode", "footerCode",
+]);
+
+export async function HEAD(req: NextRequest) {
+  if (!isAuthenticated(req)) {
+    return new NextResponse(null, { status: 401 });
+  }
+  return new NextResponse(null, { status: 200 });
+}
+
+export async function GET(req: NextRequest) {
+  const settings = getSettings();
+
+  // Public fields that the frontend needs (logo, whatsapp)
+  const isAdmin = isAuthenticated(req);
+
+  if (!isAdmin) {
+    // Only return public-safe fields
+    return NextResponse.json({
+      logo: settings.logo || "",
+      favicon: settings.favicon || "",
+      whatsappNumber: settings.whatsappNumber || "",
+      whatsappMessage: settings.whatsappMessage || "",
+    });
+  }
+
+  // Admin: return all, but mask API key
+  const masked = { ...settings };
+  if (masked.replicateApiKey) {
+    const key = masked.replicateApiKey;
+    masked.replicateApiKey = key.slice(0, 6) + "..." + key.slice(-4);
+    masked.hasApiKey = true;
+  } else {
+    masked.hasApiKey = false;
+  }
+  return NextResponse.json(masked);
+}
+
+export async function POST(req: NextRequest) {
+  if (!isAuthenticated(req)) {
+    return NextResponse.json({ error: "Yetkisiz erisim" }, { status: 401 });
+  }
+
+  try {
+    await initDB();
+    const body = await req.json();
+    const current = getSettings();
+
+    // Only allow known keys
+    const sanitized: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(body)) {
+      if (ALLOWED_KEYS.has(key) && typeof value === "string") {
+        sanitized[key] = value.slice(0, 10000); // Max length per field
+      }
+    }
+
+    // If masked key sent, keep the old one
+    if (sanitized.replicateApiKey && String(sanitized.replicateApiKey).includes("...")) {
+      sanitized.replicateApiKey = current.replicateApiKey;
+    }
+
+    const updated = { ...current, ...sanitized };
+    saveSettings(updated);
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Gecersiz istek" }, { status: 400 });
+  }
+}

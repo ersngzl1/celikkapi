@@ -1,19 +1,39 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   BarChart3, TrendingUp, Eye, Users, MousePointerClick, Brain,
   Phone, ArrowUp, ArrowDown, Globe, Smartphone, Monitor,
-  Calendar, Clock, Package, Star,
+  Calendar, Clock, Package, Star, Loader2,
 } from "lucide-react";
 
-const monthlyStats = [
-  { label: "Toplam Görüntülenme", value: "12,847", change: "+18%", up: true, icon: Eye, color: "bg-red-500" },
-  { label: "Tekil Ziyaretçi", value: "6,234", change: "+12%", up: true, icon: Users, color: "bg-slate-700" },
-  { label: "WhatsApp Tıklama", value: "487", change: "+32%", up: true, icon: MousePointerClick, color: "bg-red-600" },
-  { label: "AI Kullanım", value: "312", change: "+45%", up: true, icon: Brain, color: "bg-slate-800" },
-  { label: "Telefon Arama", value: "89", change: "-5%", up: false, icon: Phone, color: "bg-red-500" },
-  { label: "Form Gönderimi", value: "124", change: "+22%", up: true, icon: BarChart3, color: "bg-slate-700" },
-];
+interface Stats {
+  products: { total: number; inStock: number };
+  reviews: { total: number; avgRating: string };
+  contacts: { total: number; new: number };
+  gallery: { total: number; featured: number };
+}
+
+const getMonthlyStats = (stats: Stats | null) => {
+  if (!stats) {
+    return [
+      { label: "Toplam Ürün", value: "-", change: "-", up: true, icon: Package, color: "bg-red-500" },
+      { label: "Stok Ürünü", value: "-", change: "-", up: true, icon: Package, color: "bg-slate-700" },
+      { label: "Form İstek", value: "-", change: "-", up: true, icon: Phone, color: "bg-red-600" },
+      { label: "Yeni İstek", value: "-", change: "-", up: true, icon: MousePointerClick, color: "bg-slate-800" },
+      { label: "Müşteri Yorumu", value: "-", change: "-", up: true, icon: Star, color: "bg-red-500" },
+      { label: "Ortalama Puan", value: "-", change: "-", up: true, icon: BarChart3, color: "bg-slate-700" },
+    ];
+  }
+  return [
+    { label: "Toplam Ürün", value: stats.products.total.toString(), change: "-", up: true, icon: Package, color: "bg-red-500" },
+    { label: "Stok Ürünü", value: stats.products.inStock.toString(), change: "-", up: true, icon: Package, color: "bg-slate-700" },
+    { label: "Form İstek", value: stats.contacts.total.toString(), change: "-", up: true, icon: Phone, color: "bg-red-600" },
+    { label: "Yeni İstek", value: stats.contacts.new.toString(), change: "-", up: true, icon: MousePointerClick, color: "bg-slate-800" },
+    { label: "Müşteri Yorumu", value: stats.reviews.total.toString(), change: "-", up: true, icon: Star, color: "bg-red-500" },
+    { label: "Ortalama Puan", value: stats.reviews.avgRating, change: "/5", up: true, icon: BarChart3, color: "bg-slate-700" },
+  ];
+};
 
 const weeklyData = [
   { day: "Pzt", views: 420, visitors: 210 },
@@ -59,7 +79,27 @@ const popularProducts = [
 ];
 
 export default function IstatistiklerPage() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const monthlyStats = getMonthlyStats(stats);
   const maxViews = Math.max(...weeklyData.map(d => d.views));
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const res = await fetch("/api/admin/stats");
+        if (res.ok) {
+          const data = await res.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error("Error loading stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadStats();
+  }, []);
 
   return (
     <div className="space-y-6">

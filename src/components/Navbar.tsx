@@ -27,13 +27,11 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // Try to load from cache first
-    const cachedLogo = localStorage.getItem("cached_logo");
-    if (cachedLogo) {
-      setLogo(cachedLogo);
-    }
+    // Default logo based on theme
+    const defaultLogo = theme === "dark" ? "/uploads/logo-dark.png" : "/uploads/logo.png";
+    setLogo(defaultLogo);
 
-    // Fetch fresh logo from API
+    // Try to load from API (override default if set)
     fetch("/api/admin/settings")
       .then(r => r.json())
       .then(data => {
@@ -43,7 +41,7 @@ export default function Navbar() {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [theme]);
 
   return (
     <>

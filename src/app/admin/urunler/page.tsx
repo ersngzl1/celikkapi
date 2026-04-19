@@ -76,9 +76,18 @@ export default function UrunlerPage() {
         if (res.ok) {
           const data = await res.json();
           setItems(data);
+        } else if (res.status === 401) {
+          // Not authenticated, will be redirected
+          console.error("Not authenticated");
+        } else {
+          // API error, load from demo doors as fallback
+          const { doors } = await import("@/data/doors");
+          setItems(doors);
         }
       } catch (error) {
-        console.error("Error loading products:", error);
+        console.error("Error loading products, using demo:", error);
+        const { doors } = await import("@/data/doors");
+        setItems(doors);
       } finally {
         setLoading(false);
       }
@@ -174,30 +183,12 @@ export default function UrunlerPage() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64 = event.target?.result as string;
-      const filename = `door-${Date.now()}-${file.name}`;
-
-      try {
-        const res = await fetch("/api/admin/products/upload", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: base64, filename }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setForm((prev) => ({ ...prev, image: data.path }));
-        } else {
-          alert("Resim yüklenemedi");
-        }
-      } catch (error) {
-        console.error("Upload error:", error);
-        alert("Yükleme sırasında hata oluştu");
-      }
-    };
-    reader.readAsDataURL(file);
+    // Vercel serverless environment'da /public yazma yapılamadığı için,
+    // kullanıcıdan manuel URL input yapmasını istiyoruz.
+    const filename = `${file.name}`;
+    const imagePath = `/doors/${filename}`;
+    setForm((prev) => ({ ...prev, image: imagePath }));
+    alert(`Resim yolu ayarlandı: ${imagePath}\n\nResmi /public/doors/ klasörüne manuel olarak yüklemeniz gerekiyor.`);
   };
 
   const addFeature = () => {
@@ -617,23 +608,27 @@ export default function UrunlerPage() {
                       className="flex-1 px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500"
                       placeholder="/doors/celik-1.jpg"
                     />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      style={{ display: "none" }}
-                      id="imageUpload"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        document.getElementById("imageUpload")?.click()
+                    <select
+                      value={form.image}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, image: e.target.value }))
                       }
-                      className="p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
-                      title="Resim yükle"
+                      className="px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500"
                     >
-                      <Upload className="w-4 h-4 text-slate-500" />
-                    </button>
+                      <option value="">Resim seç...</option>
+                      <option value="/doors/celik-1.jpg">Çelik Kapı 1</option>
+                      <option value="/doors/celik-2.jpg">Çelik Kapı 2</option>
+                      <option value="/doors/celik-3.jpg">Çelik Kapı 3</option>
+                      <option value="/doors/celik-4.jpg">Çelik Kapı 4</option>
+                      <option value="/doors/celik-5.jpg">Çelik Kapı 5</option>
+                      <option value="/doors/celik-6.jpg">Çelik Kapı 6</option>
+                      <option value="/doors/celik-7.jpg">Çelik Kapı 7</option>
+                      <option value="/doors/celik-8.jpg">Çelik Kapı 8</option>
+                      <option value="/doors/oda-1.jpg">Oda Kapısı 1</option>
+                      <option value="/doors/oda-2.jpg">Oda Kapısı 2</option>
+                      <option value="/doors/oda-3.jpg">Oda Kapısı 3</option>
+                      <option value="/doors/oda-4.jpg">Oda Kapısı 4</option>
+                    </select>
                   </div>
                 </div>
               </div>

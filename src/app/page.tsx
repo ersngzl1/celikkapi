@@ -40,19 +40,17 @@ export default function HomePage() {
       <section className="relative min-h-[92vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0" style={{ background: 'var(--bg-primary)' }} />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(200,165,92,0.08)_0%,transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(200,165,92,0.04)_0%,transparent_50%)]" />
-          <div className="absolute inset-0 opacity-[0.02]" style={{
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(200,165,92,0.12)_0%,transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(200,165,92,0.08)_0%,transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(212,184,122,0.06)_0%,transparent_70%)]" />
+          <div className="absolute inset-0 opacity-[0.03]" style={{
             backgroundImage: "linear-gradient(rgba(200,165,92,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(200,165,92,0.12) 1px, transparent 1px)",
             backgroundSize: "80px 80px",
           }} />
-          <div className="absolute top-20 right-[15%] w-[400px] h-[400px] rounded-full animate-float" style={{ background: 'var(--gold-glow)', filter: 'blur(80px)' }} />
-          <div className="absolute bottom-10 left-[10%] w-[300px] h-[300px] rounded-full animate-float" style={{ background: 'var(--gold-glow)', filter: 'blur(60px)', animationDelay: '1.5s' }} />
+          <div className="absolute top-20 right-[15%] w-[500px] h-[500px] rounded-full animate-float" style={{ background: 'var(--gold-glow)', filter: 'blur(100px)', opacity: 0.6 }} />
+          <div className="absolute bottom-10 left-[10%] w-[400px] h-[400px] rounded-full animate-float" style={{ background: 'var(--gold-glow)', filter: 'blur(80px)', animationDelay: '1.5s', opacity: 0.5 }} />
+          <div className="absolute top-[60%] right-[20%] w-[300px] h-[300px] rounded-full animate-float" style={{ background: 'var(--gold-glow)', filter: 'blur(70px)', animationDelay: '2s', opacity: 0.3 }} />
         </div>
-
-        <Link href="/katalog" className="absolute right-[5%] top-1/2 -translate-y-1/2 opacity-[0.12] hidden xl:block hover:opacity-[0.2] transition-opacity duration-300 cursor-pointer">
-          <Image src="/doors/celik-1.jpg" alt="Çelik Kapı" width={440} height={660} className="w-[440px] h-auto rounded-3xl" />
-        </Link>
 
         <div className="container-custom relative z-10" style={{ paddingTop: '80px', paddingBottom: '40px' }}>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-12 items-center">

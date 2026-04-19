@@ -37,15 +37,39 @@ function KatalogContent() {
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [doorsList, setDoorsList] = useState(doors);
   const resultsRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  const filtered = filterDoors(category, color).filter((d) =>
-    search
-      ? d.name.toLowerCase().includes(search.toLowerCase()) ||
-        d.series.toLowerCase().includes(search.toLowerCase())
-      : true
-  );
+  // Load products from API
+  useEffect(() => {
+    const loadDoors = async () => {
+      try {
+        const res = await fetch("/api/products");
+        if (res.ok) {
+          const data = await res.json();
+          setDoorsList(data);
+        }
+      } catch (error) {
+        console.error("Error loading doors from API, using demo:", error);
+        setDoorsList(doors);
+      }
+    };
+    loadDoors();
+  }, []);
+
+  const filtered = doorsList
+    .filter((door) => {
+      if (category !== "all" && door.category !== category) return false;
+      if (color !== "all" && door.color !== color) return false;
+      return true;
+    })
+    .filter((d) =>
+      search
+        ? d.name.toLowerCase().includes(search.toLowerCase()) ||
+          d.series.toLowerCase().includes(search.toLowerCase())
+        : true
+    );
 
   const hasActiveFilters =
     category !== "all" || color !== "all" || search !== "";

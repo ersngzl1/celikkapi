@@ -56,9 +56,22 @@ const defaultSettings: SiteSettings = {
 export default function SiteAyarlariPage() {
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
   const [saved, setSaved] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"general" | "contact" | "social" | "seo">("general");
   const [logos, setLogos] = useState<{ light: string | null; dark: string | null }>({ light: null, dark: null });
+
+  // Sayfa açılınca DB'den mevcut ayarları yükle
+  useEffect(() => {
+    fetch("/api/admin/settings")
+      .then(r => r.json())
+      .then(data => {
+        setSettings(prev => ({ ...prev, ...data }));
+        if (data.logoLight) setLogos(l => ({ ...l, light: data.logoLight }));
+        if (data.logoDark) setLogos(l => ({ ...l, dark: data.logoDark }));
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleSave = async () => {
     setLoading(true);

@@ -37,22 +37,26 @@ function KatalogContent() {
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [doorsList, setDoorsList] = useState(doors);
+  const [doorsList, setDoorsList] = useState<typeof doors>([]);
+  const [catalogLoading, setCatalogLoading] = useState(true);
   const resultsRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  // Load products from API
+  // Load products from API - no demo flash
   useEffect(() => {
     const loadDoors = async () => {
       try {
         const res = await fetch("/api/products");
         if (res.ok) {
           const data = await res.json();
-          setDoorsList(data);
+          setDoorsList(data.length > 0 ? data : doors);
+        } else {
+          setDoorsList(doors);
         }
-      } catch (error) {
-        console.error("Error loading doors from API, using demo:", error);
+      } catch {
         setDoorsList(doors);
+      } finally {
+        setCatalogLoading(false);
       }
     };
     loadDoors();
@@ -101,6 +105,14 @@ function KatalogContent() {
     ...cat,
     count: doors.filter(d => d.category === cat.value).length
   }));
+
+  if (catalogLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[var(--gold)]" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-16">
@@ -343,7 +355,7 @@ function KatalogContent() {
 
                     <div className="absolute bottom-0 left-0 right-0 p-3 md:p-5 z-10">
                       <p className="text-[9px] md:text-[11px] text-[var(--gold-light)] font-semibold uppercase tracking-widest">{door.series}</p>
-                      <h3 className="font-serif text-sm md:text-xl font-bold" style={{ color: 'var(--text-primary)', marginTop: '6px', marginBottom: '10px' }}>{door.name}</h3>
+                      <h3 className="font-serif text-sm md:text-xl font-bold text-white" style={{ marginTop: '6px', marginBottom: '10px' }}>{door.name}</h3>
 
                       <div className="flex gap-1.5 md:gap-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
                         <Link href={`/ai-deneme?door=${door.id}`} className="flex-1 flex items-center justify-center gap-1 py-2.5 md:py-3 text-[10px] md:text-xs font-bold rounded-xl transition-all cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>

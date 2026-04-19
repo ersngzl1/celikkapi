@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -20,16 +20,50 @@ import {
   Clock,
   Star,
   ChevronLeft,
+  Loader2,
 } from "lucide-react";
-import { getDoorById, doors } from "@/data/doors";
 import Image from "next/image";
 import BeforeAfter from "@/components/BeforeAfter";
 
 export default function UrunDetay() {
   const params = useParams();
   const id = Number(params.id);
-  const door = getDoorById(id);
+  const [door, setDoor] = useState<any>(null);
+  const [relatedDoors, setRelatedDoors] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [productRes, allRes] = await Promise.all([
+          fetch(`/api/products/${id}`),
+          fetch("/api/products"),
+        ]);
+        if (productRes.ok) {
+          const data = await productRes.json();
+          setDoor(data);
+          if (allRes.ok) {
+            const all = await allRes.json();
+            setRelatedDoors(all.filter((d: any) => d.id !== id && d.category === data.category).slice(0, 3));
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[var(--gold)]" />
+      </div>
+    );
+  }
 
   if (!door) {
     return (
@@ -57,7 +91,7 @@ export default function UrunDetay() {
     { title: "Villa Girişi", before: "/doors/celik-1.jpg", after: "/doors/celik-1.jpg" },
   ];
 
-  const relatedDoors = doors.filter((d) => d.id !== door.id && d.category === door.category).slice(0, 3);
+  // relatedDoors loaded via useEffect above
 
   const specs = [
     { icon: Ruler, label: "Boyut", value: door.dimensions },
@@ -240,7 +274,7 @@ export default function UrunDetay() {
             <div className="mb-8">
               <h3 style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--gold)', fontWeight: 700, marginBottom: '16px' }}>Özellikler</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {door.features.map((feature) => (
+                {(door.features as string[]).map((feature) => (
                   <div key={feature} className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)]">
                     <Check className="w-4 h-4 text-[var(--gold)] flex-shrink-0" />
                     {feature}

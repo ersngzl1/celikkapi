@@ -27,22 +27,24 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // Fetch from API to get latest logos
+    // Önce cache'den göster (flash yok), sonra API'den güncelle
+    const cacheKey = `cached_logo_${theme}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) setLogo(cached);
+
     fetch("/api/admin/settings")
       .then(r => r.json())
       .then(data => {
-        // Use uploaded logo if exists, otherwise use defaults
-        const selectedLogo = theme === "dark"
-          ? (data.logoDark || "/uploads/logo-dark.png")
-          : (data.logoLight || "/uploads/logo.png");
-        setLogo(selectedLogo);
-        localStorage.setItem("cached_logo", selectedLogo);
+        const selectedLogo = theme === "dark" ? (data.logoDark || null) : (data.logoLight || null);
+        if (selectedLogo) {
+          setLogo(selectedLogo);
+          localStorage.setItem(cacheKey, selectedLogo);
+        } else {
+          setLogo(null);
+          localStorage.removeItem(cacheKey);
+        }
       })
-      .catch(() => {
-        // Fallback to default if API fails
-        const defaultLogo = theme === "dark" ? "/uploads/logo-dark.png" : "/uploads/logo.png";
-        setLogo(defaultLogo);
-      });
+      .catch(() => {});
   }, [theme]);
 
   return (

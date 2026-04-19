@@ -338,14 +338,22 @@ export default function UrunlerPage() {
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       {door.image && (
-                        <div className="w-12 h-16 rounded-lg overflow-hidden relative flex-shrink-0 border border-slate-200">
-                          <Image
-                            src={door.image}
-                            alt={door.name}
-                            fill
-                            className="object-cover"
-                            sizes="48px"
-                          />
+                        <div className="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0 border border-slate-200 bg-slate-100">
+                          {door.image.startsWith("data:") ? (
+                            <img
+                              src={door.image}
+                              alt={door.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Image
+                              src={door.image}
+                              alt={door.name}
+                              fill
+                              className="object-cover"
+                              sizes="48px"
+                            />
+                          )}
                         </div>
                       )}
                       <div>
@@ -663,6 +671,34 @@ export default function UrunlerPage() {
                     <strong>💡 Veya:</strong> Dış kaynaktan tam URL yaz (https://...)
                   </div>
                 </div>
+
+                {form.image && (
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-600 mb-2">
+                      Resim Önizlemesi
+                    </label>
+                    <div className="w-32 h-40 rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
+                      {form.image.startsWith("data:") ? (
+                        <img
+                          src={form.image}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Image
+                          src={form.image}
+                          alt="Preview"
+                          fill
+                          className="object-cover"
+                          sizes="128px"
+                          onError={() => {
+                            // Fallback for broken images
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>

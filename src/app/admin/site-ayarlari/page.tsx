@@ -25,6 +25,8 @@ interface SiteSettings {
   ce: boolean;
   iso: boolean;
   whatsappMessage: string;
+  logoLight?: string;
+  logoDark?: string;
 }
 
 const defaultSettings: SiteSettings = {
@@ -84,6 +86,17 @@ export default function SiteAyarlariPage() {
   const update = (key: keyof SiteSettings, value: string | boolean) => {
     setSettings(prev => ({ ...prev, [key]: value }));
     setSaved(false);
+  };
+
+  const handleLogoUpload = async (mode: 'light' | 'dark', file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      const key = mode === 'light' ? 'logoLight' : 'logoDark';
+      setSettings(prev => ({ ...prev, [key]: base64 }));
+      setSaved(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   const tabs = [
@@ -153,21 +166,54 @@ export default function SiteAyarlariPage() {
             <div className="pt-4 border-t border-slate-200">
               <h4 className="text-xs font-semibold text-slate-800 mb-3">🎨 Logo Ayarları</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center">
+                {/* Light Mode Logo */}
+                <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center hover:border-blue-400 transition-colors">
                   <div className="text-2xl mb-2">☀️</div>
                   <p className="text-xs font-semibold text-slate-600 mb-2">Light Mode Logo</p>
-                  <img src="/uploads/logo.png" alt="Light Logo" className="w-16 h-auto mx-auto mb-2 rounded" />
-                  <p className="text-[10px] text-slate-500">Dosya: /uploads/logo.png</p>
+                  {settings.logoLight ? (
+                    <img src={settings.logoLight} alt="Light Logo" className="w-16 h-auto mx-auto mb-2 rounded border border-slate-200" />
+                  ) : (
+                    <div className="w-16 h-16 mx-auto mb-2 rounded border border-slate-300 bg-slate-50 flex items-center justify-center text-slate-400 text-xs">
+                      Yüklenmedi
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => e.target.files?.[0] && handleLogoUpload('light', e.target.files[0])}
+                    className="hidden"
+                    id="logoLight"
+                  />
+                  <label htmlFor="logoLight" className="block px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded cursor-pointer hover:bg-blue-600 transition-colors">
+                    Yükle
+                  </label>
                 </div>
-                <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center">
+
+                {/* Dark Mode Logo */}
+                <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center hover:border-blue-400 transition-colors">
                   <div className="text-2xl mb-2">🌙</div>
                   <p className="text-xs font-semibold text-slate-600 mb-2">Dark Mode Logo</p>
-                  <img src="/uploads/logo-dark.png" alt="Dark Logo" className="w-16 h-auto mx-auto mb-2 rounded bg-slate-800 p-2" />
-                  <p className="text-[10px] text-slate-500">Dosya: /uploads/logo-dark.png</p>
+                  {settings.logoDark ? (
+                    <img src={settings.logoDark} alt="Dark Logo" className="w-16 h-auto mx-auto mb-2 rounded border border-slate-200 bg-slate-900 p-1" />
+                  ) : (
+                    <div className="w-16 h-16 mx-auto mb-2 rounded border border-slate-300 bg-slate-900 flex items-center justify-center text-slate-400 text-xs">
+                      Yüklenmedi
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => e.target.files?.[0] && handleLogoUpload('dark', e.target.files[0])}
+                    className="hidden"
+                    id="logoDark"
+                  />
+                  <label htmlFor="logoDark" className="block px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded cursor-pointer hover:bg-blue-600 transition-colors">
+                    Yükle
+                  </label>
                 </div>
               </div>
               <p className="text-xs text-slate-500 mt-3 p-2 bg-blue-50 rounded">
-                💡 Logolarını değiştirmek için /uploads/logo.png ve /uploads/logo-dark.png dosyalarını değiştir
+                💡 PNG ya da JPG formatında logolarını yükle. Resimleri kaydetmek için en aşağıda "Kaydet" butonuna tıkla.
               </p>
             </div>
           </div>

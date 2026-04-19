@@ -28,11 +28,13 @@ function saveSettings(data: Record<string, unknown>) {
 
 // Allowed setting keys to prevent arbitrary data injection
 const ALLOWED_KEYS = new Set([
-  "replicateApiKey", "imagePrompt", "logo", "favicon",
+  "replicateApiKey", "imagePrompt", "logo", "favicon", "logoLight", "logoDark",
   "whatsappNumber", "whatsappMessage",
   "metaTitle", "metaDescription", "metaKeywords",
   "ogTitle", "ogDescription", "ogImage",
   "headerCode", "footerCode",
+  "companyName", "slogan", "phone", "phone2", "whatsapp", "email", "address", "city",
+  "workingHours", "workingDays", "googleMapsUrl", "instagramUrl", "facebookUrl", "youtubeUrl",
 ]);
 
 export async function HEAD(req: NextRequest) {
@@ -84,7 +86,11 @@ export async function POST(req: NextRequest) {
     const sanitized: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(body)) {
       if (ALLOWED_KEYS.has(key) && typeof value === "string") {
-        sanitized[key] = value.slice(0, 10000); // Max length per field
+        // Logo base64 images can be larger, others have 10000 limit
+        const maxLen = (key === "logoLight" || key === "logoDark") ? 1500000 : 10000;
+        sanitized[key] = value.slice(0, maxLen);
+      } else if (ALLOWED_KEYS.has(key) && typeof value === "boolean") {
+        sanitized[key] = value; // Allow booleans for checkboxes
       }
     }
 

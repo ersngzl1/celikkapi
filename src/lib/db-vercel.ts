@@ -214,3 +214,38 @@ export const contactQueries = {
     await sql`DELETE FROM contacts WHERE id = ${id}`;
   },
 };
+
+// Category queries
+export const categoryQueries = {
+  getAll: async () => {
+    const result = await sql`SELECT * FROM categories ORDER BY value ASC`;
+    return result.rows || [];
+  },
+
+  getById: async (id: number) => {
+    const result = await sql`SELECT * FROM categories WHERE id = ${id}`;
+    return result.rows?.[0];
+  },
+
+  create: async (category: any) => {
+    const result = await sql`
+      INSERT INTO categories (value, label)
+      VALUES (${category.value}, ${category.label})
+      RETURNING id
+    `;
+    return result.rows?.[0];
+  },
+
+  update: async (id: number, category: any) => {
+    await sql`
+      UPDATE categories SET
+        value = ${category.value},
+        label = ${category.label}
+      WHERE id = ${id}
+    `;
+  },
+
+  delete: async (id: number) => {
+    await sql`DELETE FROM categories WHERE id = ${id}`;
+  },
+};

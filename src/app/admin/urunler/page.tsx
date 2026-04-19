@@ -47,7 +47,7 @@ const emptyForm: DoorForm = {
   inStock: true,
 };
 
-const categories = [
+const defaultCategories = [
   { value: "premium", label: "Premium" },
   { value: "luks", label: "Lüks" },
   { value: "modern", label: "Modern" },
@@ -55,8 +55,15 @@ const categories = [
   { value: "oda", label: "Oda Kapısı" },
 ];
 
+interface Category {
+  id?: number;
+  value: string;
+  label: string;
+}
+
 export default function UrunlerPage() {
   const [items, setItems] = useState<DoorForm[]>([]);
+  const [categories, setCategories] = useState<Category[]>(defaultCategories);
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [showForm, setShowForm] = useState(false);
@@ -68,31 +75,39 @@ export default function UrunlerPage() {
   const [saving, setSaving] = useState(false);
   const [generatingDoor, setGeneratingDoor] = useState<number | null>(null);
 
-  // Load products on mount
+  // Load products and categories on mount
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadData = async () => {
       try {
-        const res = await fetch("/api/admin/products");
-        if (res.ok) {
-          const data = await res.json();
+        const [productsRes, categoriesRes] = await Promise.all([
+          fetch("/api/admin/products"),
+          fetch("/api/admin/categories"),
+        ]);
+
+        if (productsRes.ok) {
+          const data = await productsRes.json();
           setItems(data);
-        } else if (res.status === 401) {
-          // Not authenticated, will be redirected
-          console.error("Not authenticated");
         } else {
           // API error, load from demo doors as fallback
           const { doors } = await import("@/data/doors");
           setItems(doors);
         }
+
+        if (categoriesRes.ok) {
+          const cats = await categoriesRes.json();
+          if (cats.length > 0) {
+            setCategories(cats);
+          }
+        }
       } catch (error) {
-        console.error("Error loading products, using demo:", error);
+        console.error("Error loading data:", error);
         const { doors } = await import("@/data/doors");
         setItems(doors);
       } finally {
         setLoading(false);
       }
     };
-    loadProducts();
+    loadData();
   }, []);
 
   const filtered = items.filter((d) => {
@@ -183,12 +198,25 @@ export default function UrunlerPage() {
       return;
     }
 
-    // Vercel serverless environment'da /public yazma yapılamadığı için,
-    // kullanıcıdan manuel URL input yapmasını istiyoruz.
-    const filename = `${file.name}`;
-    const imagePath = `/doors/${filename}`;
-    setForm((prev) => ({ ...prev, image: imagePath }));
-    alert(`Resim yolu ayarlandı: ${imagePath}\n\nResmi /public/doors/ klasörüne manuel olarak yüklemeniz gerekiyor.`);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/admin/products/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setForm((prev) => ({ ...prev, image: data.image }));
+      } else {
+        alert("Resim yükleme başarısız");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Yükleme sırasında hata oluştu");
+    }
   };
 
   const addFeature = () => {
@@ -596,8 +624,28 @@ export default function UrunlerPage() {
                   </select>
                 </div>
                 <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-slate-600 mb-2">
+                    Resim Yükle
+                  </label>
+                  <div className="flex gap-2 mb-3">
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      onChange={handleImageUpload}
+                      className="flex-1 px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500"
+                    />
+                    <Upload className="w-4 h-4 text-slate-400 mt-3" />
+                  </div>
+                  {form.image && form.image.startsWith("data:") && (
+                    <div className="mb-3 p-2 bg-green-50 rounded text-xs text-green-700">
+                      ✓ Resim yüklendi ve kaydedilecek
+                    </div>
+                  )}
+                </div>
+
+                <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-slate-600 mb-1">
-                    Görsel URL
+                    Veya Görsel URL
                   </label>
                   <input
                     value={form.image}
@@ -605,14 +653,14 @@ export default function UrunlerPage() {
                       setForm((p) => ({ ...p, image: e.target.value }))
                     }
                     className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500"
-                    placeholder="Örnek: /doors/celik-1.jpg"
+                    placeholder="Örnek: /doors/celik-1.jpg veya https://..."
                   />
                   <div className="mt-2 p-2 bg-blue-50 rounded text-xs">
                     <strong>📦 Mevcut Resimler:</strong><br/>
                     🚪 Çelik: /doors/celik-1.jpg - celik-8.jpg<br/>
                     🏠 Oda: /doors/oda-1.jpg - oda-4.jpg<br/>
                     <br/>
-                    <strong>💡 Veya:</strong> Kendi resimini serve ediyor isen tam URL yaz
+                    <strong>💡 Veya:</strong> Dış kaynaktan tam URL yaz (https://...)
                   </div>
                 </div>
               </div>

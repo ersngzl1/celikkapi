@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
-import { initDB } from "@/lib/db-vercel";
-import { promises as fs } from "fs";
-import path from "path";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "doors");
 const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "webp"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -14,16 +10,16 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await initDB();
-    const body = await request.json();
-    const { image, filename } = body; // image: base64, filename: "door-123.jpg"
+    const formData = await request.formData();
+    const file = formData.get("file") as File;
 
-    if (!image || !filename) {
-      return NextResponse.json({ error: "Missing image or filename" }, { status: 400 });
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
     // Validate extension
-    const ext = filename.split(".").pop()?.toLowerCase();
+    const filename = file.name.toLowerCase();
+    const ext = filename.split(".").pop();
     if (!ext || !ALLOWED_EXTENSIONS.includes(ext)) {
       return NextResponse.json(
         { error: `Invalid extension. Allowed: ${ALLOWED_EXTENSIONS.join(", ")}` },
@@ -32,22 +28,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate size
-    const base64Data = image.split(",")[1] || image;
-    const buffer = Buffer.from(base64Data, "base64");
-    if (buffer.length > MAX_SIZE) {
+    if (file.size > MAX_SIZE) {
       return NextResponse.json({ error: `File size exceeds ${MAX_SIZE / 1024 / 1024}MB` }, { status: 400 });
     }
 
-    // Ensure directory exists
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
+    // Convert file to base64
+    const buffer = await file.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+    const dataUri = `data:${file.type};base64,${base64}`;
 
-    // Write file
-    const safeFilename = path.basename(filename);
-    const filepath = path.join(UPLOAD_DIR, safeFilename);
-    await fs.writeFile(filepath, buffer);
-
-    const publicPath = `/uploads/doors/${safeFilename}`;
-    return NextResponse.json({ success: true, path: publicPath });
+    return NextResponse.json({ success: true, image: dataUri });
   } catch (error: any) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

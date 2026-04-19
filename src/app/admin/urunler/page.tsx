@@ -161,11 +161,12 @@ export default function UrunlerPage() {
         setShowForm(false);
         setEditItem(null);
       } else {
-        alert("Kaydedilemedi!");
+        const error = await res.json().catch(() => ({}));
+        alert(`Kaydedilemedi: ${error.error || "Bilinmeyen hata"}`);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Hata oluştu");
+      alert(`Hata oluştu: ${error instanceof Error ? error.message : "Bilinmeyen hata"}`);
     } finally {
       setSaving(false);
     }

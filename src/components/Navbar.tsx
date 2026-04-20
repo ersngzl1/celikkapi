@@ -15,9 +15,17 @@ const navLinks = [
   { href: "/iletisim", label: "İletişim" },
 ];
 
+function getInitialLogo(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const theme = localStorage.getItem("theme") || "dark";
+    return localStorage.getItem(`cached_logo_${theme}`) || null;
+  } catch { return null; }
+}
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [logo, setLogo] = useState<string | null>(null);
+  const [logo, setLogo] = useState<string | null>(getInitialLogo);
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { settings } = useSettings();
@@ -30,16 +38,15 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // Önce localStorage cache'den göster — flash önlenir
     const cacheKey = `cached_logo_${theme}`;
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) setLogo(cached);
-
-    // Settings yüklendiğinde güncelle
     const selectedLogo = theme === "dark" ? (settings.logoDark || null) : (settings.logoLight || null);
     if (selectedLogo) {
       setLogo(selectedLogo);
       localStorage.setItem(cacheKey, selectedLogo);
+    } else {
+      // Theme değiştiğinde diğer tema cache'ini kontrol et
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) setLogo(cached);
     }
   }, [settings, theme]);
 

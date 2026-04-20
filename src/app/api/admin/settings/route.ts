@@ -60,13 +60,25 @@ export async function GET(req: NextRequest) {
   const isAdmin = isAuthenticated(req);
 
   if (!isAdmin) {
-    // Only return public-safe fields
+    // Return all public-safe fields (no API keys)
     return NextResponse.json({
+      companyName: settings.companyName || "",
+      slogan: settings.slogan || "",
+      phone: settings.phone || "",
+      phone2: settings.phone2 || "",
+      whatsapp: settings.whatsapp || "",
+      whatsappMessage: settings.whatsappMessage || "",
+      email: settings.email || "",
+      address: settings.address || "",
+      city: settings.city || "",
+      workingHours: settings.workingHours || "",
+      workingDays: settings.workingDays || "",
+      googleMapsUrl: settings.googleMapsUrl || "",
+      instagramUrl: settings.instagramUrl || "",
+      facebookUrl: settings.facebookUrl || "",
+      youtubeUrl: settings.youtubeUrl || "",
       logoLight: settings.logoLight || "",
       logoDark: settings.logoDark || "",
-      favicon: settings.favicon || "",
-      whatsappNumber: settings.whatsappNumber || "",
-      whatsappMessage: settings.whatsappMessage || "",
     });
   }
 

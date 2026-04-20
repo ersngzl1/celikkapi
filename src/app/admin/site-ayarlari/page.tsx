@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Save, Phone, MapPin, Clock, Globe, Shield, CheckCircle2, AlertCircle, Upload } from "lucide-react";
+import { invalidateSettingsCache } from "@/lib/useSettings";
 
 interface SiteSettings {
   companyName: string;
@@ -83,6 +84,7 @@ export default function SiteAyarlariPage() {
       });
 
       if (res.ok) {
+        invalidateSettingsCache();
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
       } else {

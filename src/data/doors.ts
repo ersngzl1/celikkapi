@@ -16,6 +16,7 @@ export interface Door {
   features: string[];
   inStock: boolean;
   image: string;
+  slug?: string;
 }
 
 export const doors: Door[] = [

@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { Phone, X } from "lucide-react";
+import { useSettings } from "@/lib/useSettings";
 
 export default function FloatingCTA() {
   const [showPhone, setShowPhone] = useState(false);
+  const { settings } = useSettings();
+  const waLink = `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(settings.whatsappMessage)}`;
 
   return (
     <div className="hidden lg:flex fixed bottom-5 right-5 z-[100] flex-col items-end gap-3">
       {showPhone && (
-        <a href="tel:+903221234567"
+        <a href={`tel:${settings.phone.replace(/[^0-9+]/g, "")}`}
           className="flex items-center gap-3 pl-4 pr-5 py-3 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-up cta-gold"
           style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))' }}>
           <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.2)' }}>
@@ -17,7 +20,7 @@ export default function FloatingCTA() {
           </div>
           <div className="text-left">
             <div className="text-[10px] uppercase tracking-wider opacity-80">Hemen Ara</div>
-            <div className="text-sm font-bold">(0322) 123 45 67</div>
+            <div className="text-sm font-bold">{settings.phone}</div>
           </div>
         </a>
       )}
@@ -35,7 +38,7 @@ export default function FloatingCTA() {
         </button>
 
         {/* WhatsApp */}
-        <a href="https://wa.me/903221234567?text=Merhabalar%2C%20%C3%A7elik%20kap%C4%B1%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum."
+        <a href={waLink}
           target="_blank" rel="noopener noreferrer"
           className="flex items-center gap-2.5 pl-4 pr-5 py-3.5 bg-[#25D366] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 wa-glow wa-pulse">
           <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current">

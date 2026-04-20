@@ -1,6 +1,20 @@
 import { sql } from "@vercel/postgres";
 import { doors } from "@/data/doors";
 
+export function generateSlug(name: string): string {
+  const turkishMap: Record<string, string> = {
+    ç: "c", Ç: "c", ğ: "g", Ğ: "g", ı: "i", İ: "i",
+    ö: "o", Ö: "o", ş: "s", Ş: "s", ü: "u", Ü: "u",
+  };
+  return name
+    .split("")
+    .map(c => turkishMap[c] || c)
+    .join("")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export async function initDB() {
   try {
     // Create tables if they don't exist
@@ -23,9 +37,25 @@ export async function initDB() {
         features TEXT NOT NULL,
         image TEXT NOT NULL,
         inStock INTEGER NOT NULL DEFAULT 1,
+        featured INTEGER NOT NULL DEFAULT 0,
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+    // Add featured column if missing (migration)
+    try {
+      await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS featured INTEGER NOT NULL DEFAULT 0`;
+    } catch {};
+
+    // Add slug column if missing (migration)
+    try {
+      await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS slug TEXT`;
+      // Generate slugs for existing products that don't have one
+      const noSlug = await sql`SELECT id, name FROM products WHERE slug IS NULL OR slug = ''`;
+      for (const row of noSlug.rows || []) {
+        const slug = generateSlug(row.name as string);
+        await sql`UPDATE products SET slug = ${slug} WHERE id = ${row.id}`;
+      }
+    } catch {};
 
     await sql`
       CREATE TABLE IF NOT EXISTS reviews (
@@ -98,9 +128,10 @@ export async function initDB() {
 
     if (count === 0) {
       for (const door of doors) {
+        const slug = generateSlug(door.name);
         await sql`
-          INSERT INTO products (id, name, series, category, color, colorHex, thickness, material, lockSystem, dimensions, weight, insulation, warranty, description, features, image, inStock)
-          VALUES (${door.id}, ${door.name}, ${door.series}, ${door.category}, ${door.color}, ${door.colorHex}, ${door.thickness}, ${door.material}, ${door.lockSystem}, ${door.dimensions}, ${door.weight}, ${door.insulation}, ${door.warranty}, ${door.description}, ${JSON.stringify(door.features)}, ${door.image}, ${door.inStock ? 1 : 0})
+          INSERT INTO products (id, name, slug, series, category, color, colorHex, thickness, material, lockSystem, dimensions, weight, insulation, warranty, description, features, image, inStock)
+          VALUES (${door.id}, ${door.name}, ${slug}, ${door.series}, ${door.category}, ${door.color}, ${door.colorHex}, ${door.thickness}, ${door.material}, ${door.lockSystem}, ${door.dimensions}, ${door.weight}, ${door.insulation}, ${door.warranty}, ${door.description}, ${JSON.stringify(door.features)}, ${door.image}, ${door.inStock ? 1 : 0})
         `;
       }
     }
@@ -128,17 +159,29 @@ export const productQueries = {
     return row;
   },
 
+  getBySlug: async (slug: string) => {
+    const result = await sql`SELECT * FROM products WHERE slug = ${slug}`;
+    const row = result.rows?.[0];
+    if (row) {
+      row.features = typeof row.features === "string" ? JSON.parse(row.features) : row.features;
+    }
+    return row;
+  },
+
   create: async (product: any) => {
+    const slug = product.slug || generateSlug(product.name);
     await sql`
-      INSERT INTO products (id, name, series, category, color, colorHex, thickness, material, lockSystem, dimensions, weight, insulation, warranty, description, features, image, inStock)
-      VALUES (${product.id}, ${product.name}, ${product.series}, ${product.category}, ${product.color}, ${product.colorHex}, ${product.thickness}, ${product.material}, ${product.lockSystem}, ${product.dimensions}, ${product.weight}, ${product.insulation}, ${product.warranty}, ${product.description}, ${JSON.stringify(product.features || [])}, ${product.image}, ${product.inStock ? 1 : 0})
+      INSERT INTO products (id, name, slug, series, category, color, colorHex, thickness, material, lockSystem, dimensions, weight, insulation, warranty, description, features, image, inStock)
+      VALUES (${product.id}, ${product.name}, ${slug}, ${product.series}, ${product.category}, ${product.color}, ${product.colorHex}, ${product.thickness}, ${product.material}, ${product.lockSystem}, ${product.dimensions}, ${product.weight}, ${product.insulation}, ${product.warranty}, ${product.description}, ${JSON.stringify(product.features || [])}, ${product.image}, ${product.inStock ? 1 : 0})
     `;
   },
 
   update: async (id: number, product: any) => {
+    const slug = product.slug || generateSlug(product.name);
     await sql`
       UPDATE products SET
         name = ${product.name},
+        slug = ${slug},
         series = ${product.series},
         category = ${product.category},
         color = ${product.color},
@@ -160,6 +203,10 @@ export const productQueries = {
 
   delete: async (id: number) => {
     await sql`DELETE FROM products WHERE id = ${id}`;
+  },
+
+  toggleFeatured: async (id: number, featured: number) => {
+    await sql`UPDATE products SET featured = ${featured} WHERE id = ${id}`;
   },
 };
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Plus, Search, Edit2, Trash2, Eye, Filter,
-  ChevronDown, X, Save, Upload, Sparkles, Loader2,
+  ChevronDown, X, Save, Upload, Sparkles, Loader2, Star,
 } from "lucide-react";
 
 interface DoorForm {
@@ -25,6 +25,8 @@ interface DoorForm {
   features: string[];
   image: string;
   inStock?: boolean;
+  featured?: number;
+  slug?: string;
 }
 
 const emptyForm: DoorForm = {
@@ -245,6 +247,20 @@ export default function UrunlerPage() {
     }));
   };
 
+  const handleToggleFeatured = async (door: DoorForm) => {
+    const newVal = door.featured ? 0 : 1;
+    try {
+      await fetch(`/api/admin/products/${door.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ featured: newVal }),
+      });
+      setItems(prev => prev.map(d => d.id === door.id ? { ...d, featured: newVal } : d));
+    } catch {
+      alert("Güncellenemedi");
+    }
+  };
+
   const generateVisuals = async (door: DoorForm) => {
     setGeneratingDoor(door.id);
     try {
@@ -339,6 +355,7 @@ export default function UrunlerPage() {
                 <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Renk</th>
                 <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Kalınlık</th>
                 <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Garanti</th>
+                <th className="text-center px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Ana Sayfa</th>
                 <th className="text-right px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">İşlemler</th>
               </tr>
             </thead>
@@ -394,6 +411,15 @@ export default function UrunlerPage() {
                   <td className="px-5 py-3 text-sm text-slate-600 hidden md:table-cell">
                     {door.warranty}
                   </td>
+                  <td className="px-5 py-3 text-center hidden sm:table-cell">
+                    <button
+                      onClick={() => handleToggleFeatured(door)}
+                      title={door.featured ? "Ana sayfadan kaldır" : "Ana sayfaya ekle"}
+                      className={`p-1.5 rounded-lg transition-colors ${door.featured ? "text-amber-500 bg-amber-50 hover:bg-amber-100" : "text-slate-300 hover:text-amber-400 hover:bg-amber-50"}`}
+                    >
+                      <Star className={`w-4 h-4 ${door.featured ? "fill-amber-400" : ""}`} />
+                    </button>
+                  </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-1 flex-wrap">
                       <button
@@ -416,7 +442,7 @@ export default function UrunlerPage() {
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <a
-                        href={`/urun/${door.id}`}
+                        href={`/urun/${door.slug || door.id}`}
                         target="_blank"
                         className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
                         title="Önizle"

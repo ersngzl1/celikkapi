@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   Shield, Award, Users, MapPin, Phone, ArrowRight, CheckCircle2, Star, Clock, Wrench, Building2, Sparkles,
 } from "lucide-react";
+import PhoneCTA from "@/components/PhoneCTA";
 
 export const metadata: Metadata = {
   title: "Hakkımızda | Best Kapı - Adana Çelik Kapı",
@@ -219,9 +220,7 @@ export default function HakkimizdaPage() {
             <Link href="/iletisim" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl transition-colors text-[15px] cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
               İletişime Geçin <ArrowRight className="w-4 h-4" />
             </Link>
-            <a href="tel:+903221234567" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-[var(--text-primary)] font-bold rounded-xl transition-colors text-[15px]" style={{ border: '1px solid var(--border-light)' }}>
-              <Phone className="w-4 h-4" /> (0322) 123 45 67
-            </a>
+            <PhoneCTA className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-[var(--text-primary)] font-bold rounded-xl transition-colors text-[15px]" style={{ border: '1px solid var(--border-light)' }} />
           </div>
         </div>
       </section>

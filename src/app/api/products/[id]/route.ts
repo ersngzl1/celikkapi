@@ -6,15 +6,14 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: idStr } = await params;
-    const id = parseInt(idStr);
-
-    if (isNaN(id)) {
-      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
-    }
-
+    const { id: idOrSlug } = await params;
     await initDB();
-    const product = await productQueries.getById(id);
+
+    // Try numeric ID first, then slug
+    const numId = parseInt(idOrSlug);
+    const product = !isNaN(numId)
+      ? await productQueries.getById(numId)
+      : await productQueries.getBySlug(idOrSlug);
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });

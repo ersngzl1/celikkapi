@@ -12,8 +12,10 @@ import {
   MessageSquare,
   Shield,
 } from "lucide-react";
+import { useSettings } from "@/lib/useSettings";
 
 export default function IletisimPage() {
+  const { settings } = useSettings();
   const [formState, setFormState] = useState({
     name: "",
     phone: "",
@@ -56,32 +58,33 @@ export default function IletisimPage() {
     setIsSubmitting(false);
   };
 
+  const waLink = `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(settings.whatsappMessage)}`;
   const contactInfo = [
     {
       icon: Phone,
       label: "Telefon",
-      value: "(0322) 123 45 67",
-      href: "tel:+903221234567",
-      sub: "Pazartesi - Cumartesi: 09:00 - 18:00",
+      value: settings.phone,
+      href: `tel:${settings.phone.replace(/[^0-9+]/g, "")}`,
+      sub: `${settings.workingDays}: ${settings.workingHours}`,
     },
     {
       icon: Mail,
       label: "E-posta",
-      value: "info@bestkapi.com",
-      href: "mailto:info@bestkapi.com",
+      value: settings.email,
+      href: `mailto:${settings.email}`,
       sub: "24 saat içinde yanıt",
     },
     {
       icon: MapPin,
       label: "Adres",
-      value: "Yüreğir Sanayi Sitesi",
-      href: "https://maps.google.com",
-      sub: "Yüreğir / Adana",
+      value: settings.address,
+      href: settings.googleMapsUrl || undefined,
+      sub: settings.city,
     },
     {
       icon: Clock,
       label: "Çalışma Saatleri",
-      value: "Pzt - Cmt: 09:00 - 18:00",
+      value: `${settings.workingDays}: ${settings.workingHours}`,
       href: undefined,
       sub: "Pazar: Kapalı",
     },
@@ -320,25 +323,25 @@ export default function IletisimPage() {
                     <MapPin className="w-5 h-5 text-[var(--gold)]" />
                   </div>
                   <p className="text-xs text-[var(--text-muted)] text-center" style={{ padding: '0 16px' }}>
-                    Yüreğir Sanayi Sitesi
-                    <br />
-                    Yüreğir / Adana
+                    {settings.address}
                   </p>
-                  <a
-                    href="https://maps.google.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-[var(--gold-light)] hover:text-[var(--gold)] transition-colors font-semibold"
-                    style={{ marginTop: '12px' }}
-                  >
-                    Haritada Göster &rarr;
-                  </a>
+                  {settings.googleMapsUrl && (
+                    <a
+                      href={settings.googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[var(--gold-light)] hover:text-[var(--gold)] transition-colors font-semibold"
+                      style={{ marginTop: '12px' }}
+                    >
+                      Haritada Göster &rarr;
+                    </a>
+                  )}
                 </div>
               </div>
 
               {/* WhatsApp */}
               <a
-                href="https://wa.me/903221234567"
+                href={waLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full text-white rounded-xl hover:opacity-90 transition-all text-sm font-bold wa-glow"

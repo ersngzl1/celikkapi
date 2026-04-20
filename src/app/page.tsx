@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Shield, Lock, Thermometer, Award, ChevronRight, ArrowRight,
   Fingerprint, Wrench, Star, Phone, CheckCircle2, Clock,
   BadgeCheck, Users, Eye, Camera, MousePointerClick, ImageIcon, Sparkles,
 } from "lucide-react";
-import { doors, getRoomDoors, getSteelDoors } from "@/data/doors";
+// Products are now fetched from API, no static imports needed
 import Image from "next/image";
 import BeforeAfter from "@/components/BeforeAfter";
+import { useSettings } from "@/lib/useSettings";
 
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -26,13 +27,46 @@ function useScrollReveal() {
   return ref;
 }
 
-const featuredDoors = getSteelDoors().slice(0, 4);
-const featuredRoomDoors = getRoomDoors();
-
-const waLink = "https://wa.me/903221234567?text=Merhabalar%2C%20%C3%A7elik%20kap%C4%B1%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum.";
-
 export default function HomePage() {
   const revealRef = useScrollReveal();
+  const { settings } = useSettings();
+  const [featuredDoors, setFeaturedDoors] = useState<any[]>([]);
+  const [roomDoors, setRoomDoors] = useState<any[]>([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [galleryItems, setGalleryItems] = useState<any[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setTotalProducts(data.length);
+          const featured = data.filter((p: any) => p.featured);
+          const steelDoors = data.filter((p: any) => p.category === "Çelik Kapı" || p.category === "celik");
+          const roomOnes = data.filter((p: any) => p.category === "Oda Kapısı" || p.category === "oda");
+          setFeaturedDoors(featured.length > 0 ? featured.slice(0, 6) : steelDoors.slice(0, 6));
+          setRoomDoors(roomOnes.slice(0, 6));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setProductsLoading(false));
+
+    fetch("/api/gallery")
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const parsed = data.map((item: any) => {
+            let meta: any = {};
+            try { meta = typeof item.category === "string" ? JSON.parse(item.category) : item.category || {}; } catch {}
+            return { ...item, meta };
+          }).filter((item: any) => item.meta.beforeImage && item.src);
+          setGalleryItems(parsed.slice(0, 3));
+        }
+      })
+      .catch(() => {});
+  }, []);
+  const waLink = `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(settings.whatsappMessage)}`;
 
   return (
     <div ref={revealRef}>
@@ -78,7 +112,7 @@ export default function HomePage() {
                 <Link href="/katalog" className="group inline-flex items-center justify-center gap-2 px-7 py-4 font-bold rounded-xl transition-all duration-300 cta-gold text-[15px]" style={{ background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)', color: 'var(--bg-primary)' }}>
                   Kataloğu İncele
                 </Link>
-                <a href="tel:+903221234567" className="inline-flex items-center justify-center gap-2 px-7 py-4 text-[var(--text-primary)] font-bold rounded-xl transition-all duration-300 text-[15px]" style={{ border: '1px solid var(--border-light)' }}>
+                <a href={`tel:${settings.phone.replace(/[^0-9+]/g, "")}`} className="inline-flex items-center justify-center gap-2 px-7 py-4 text-[var(--text-primary)] font-bold rounded-xl transition-all duration-300 text-[15px]" style={{ border: '1px solid var(--border-light)' }}>
                   <Phone className="w-4 h-4 text-[var(--gold)]" /> Hemen Ara
                 </a>
               </div>
@@ -126,11 +160,16 @@ export default function HomePage() {
               <p className="animate-on-scroll text-[var(--text-secondary)]" style={{ marginTop: '8px' }}>Adana&apos;da en çok tercih edilen çelik kapı modellerimiz.</p>
             </div>
             <Link href="/katalog" className="animate-on-scroll group inline-flex items-center gap-2 text-sm font-bold text-[var(--gold-light)] hover:text-[var(--gold)] transition-colors">
-              Tüm Koleksiyon ({doors.length} model) <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              Tüm Koleksiyon ({totalProducts || featuredDoors.length} model) <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
           <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+            {productsLoading && featuredDoors.length === 0 && (
+              <div className="w-full flex justify-center py-16">
+                <div className="w-8 h-8 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
             {featuredDoors.map((door) => (
               <div key={door.id} className="snap-start shrink-0 w-[75%] sm:w-[48%] lg:w-[31%]">
                 <div className="group relative rounded-2xl overflow-hidden h-[420px] md:h-[480px]" style={{ border: '1px solid var(--border)' }}>
@@ -153,7 +192,7 @@ export default function HomePage() {
                       <Link href={`/ai-deneme?door=${door.id}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-bold rounded-xl transition-colors cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
                         <Sparkles className="w-3.5 h-3.5" /> AI ile Dene
                       </Link>
-                      <Link href={`/urun/${door.id}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 text-white text-xs font-bold rounded-xl transition-colors" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                      <Link href={`/urun/${door.slug || door.id}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 text-white text-xs font-bold rounded-xl transition-colors" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}>
                         <Eye className="w-3.5 h-3.5" /> Detay
                       </Link>
                     </div>
@@ -183,12 +222,12 @@ export default function HomePage() {
               <p className="animate-on-scroll text-[var(--text-secondary)]" style={{ marginTop: '8px' }}>Evinizin iç mekanlarına uyum sağlayan şık oda kapıları.</p>
             </div>
             <Link href="/katalog?category=oda" className="animate-on-scroll group inline-flex items-center gap-2 text-sm font-bold text-[var(--gold-light)] hover:text-[var(--gold)] transition-colors">
-              Tüm Koleksiyon ({featuredRoomDoors.length} model) <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              Tüm Koleksiyon ({roomDoors.length} model) <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
           <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-            {featuredRoomDoors.map((rd) => (
+            {roomDoors.map((rd) => (
               <div key={rd.id} className="snap-start shrink-0 w-[75%] sm:w-[48%] lg:w-[31%]">
                 <div className="group relative rounded-2xl overflow-hidden h-[420px] md:h-[480px]" style={{ border: '1px solid var(--border)' }}>
                   <Image src={rd.image} alt={rd.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 640px) 75vw, (max-width: 1024px) 48vw, 31vw" />
@@ -328,76 +367,25 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div>
-              <BeforeAfter
-                beforeBg="linear-gradient(135deg, #D4C5A9 0%, #B8A88A 100%)"
-                afterBg="linear-gradient(135deg, #1E293B 0%, #334155 100%)"
-                beforeContent={
-                  <div className="flex flex-col items-center justify-center w-full h-full p-3 md:p-6">
-                    <div className="w-12 h-20 md:w-20 md:h-36 rounded-md border-2 md:border-4 border-dashed border-amber-800/40 flex items-center justify-center bg-amber-900/10">
-                      <svg className="w-5 h-5 md:w-8 md:h-8 text-amber-800/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    </div>
-                    <p className="mt-1 md:mt-3 text-amber-900/50 text-[9px] md:text-xs font-medium">Eski ahşap kapı</p>
-                  </div>
-                }
-                afterContent={
-                  <div className="flex flex-col items-center justify-center w-full h-full p-3 md:p-6">
-                    <Image src="/doors/celik-4.jpg" alt="Vega Modern" width={80} height={120} className="w-12 md:w-20 h-auto rounded-md drop-shadow-2xl" />
-                    <p className="mt-1 md:mt-3 text-white/60 text-[9px] md:text-xs font-medium">Vega Modern</p>
-                  </div>
-                }
-                caption="Villa Giriş Kapısı"
-                location="Adana, Çukurova"
-              />
+          {galleryItems.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {galleryItems.map((item, idx) => (
+                <div key={item.id || idx}>
+                  <BeforeAfter
+                    before={item.meta.beforeImage}
+                    after={item.src}
+                    caption={item.alt || item.meta.doorModel || "Montaj Örneği"}
+                    location={item.meta.location || ""}
+                  />
+                </div>
+              ))}
             </div>
-
-            <div>
-              <BeforeAfter
-                beforeBg="linear-gradient(135deg, #C4B5A0 0%, #A89880 100%)"
-                afterBg="linear-gradient(135deg, #3E2415 0%, #5C3A21 100%)"
-                beforeContent={
-                  <div className="flex flex-col items-center justify-center w-full h-full p-3 md:p-6">
-                    <div className="w-12 h-20 md:w-20 md:h-36 rounded-md border-2 md:border-4 border-dashed border-stone-700/40 flex items-center justify-center bg-stone-800/10">
-                      <svg className="w-5 h-5 md:w-8 md:h-8 text-stone-700/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    </div>
-                    <p className="mt-1 md:mt-3 text-stone-800/50 text-[9px] md:text-xs font-medium">Yıpranmış eski kapı</p>
-                  </div>
-                }
-                afterContent={
-                  <div className="flex flex-col items-center justify-center w-full h-full p-3 md:p-6">
-                    <Image src="/doors/celik-2.jpg" alt="Titan Pro" width={80} height={120} className="w-12 md:w-20 h-auto rounded-md drop-shadow-2xl" />
-                    <p className="mt-1 md:mt-3 text-white/60 text-[9px] md:text-xs font-medium">Titan Pro</p>
-                  </div>
-                }
-                caption="Apartman Kapı Yenileme"
-                location="Adana, Seyhan"
-              />
+          ) : (
+            <div className="text-center py-16">
+              <ImageIcon className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
+              <p className="text-[var(--text-secondary)]">Galeri fotoğrafları yakında eklenecek.</p>
             </div>
-
-            <div>
-              <BeforeAfter
-                beforeBg="linear-gradient(135deg, #BEB5A5 0%, #9E9585 100%)"
-                afterBg="linear-gradient(135deg, #8C6239 0%, #6B4F30 100%)"
-                beforeContent={
-                  <div className="flex flex-col items-center justify-center w-full h-full p-3 md:p-6">
-                    <div className="w-12 h-20 md:w-20 md:h-36 rounded-md border-2 md:border-4 border-dashed border-gray-600/40 flex items-center justify-center bg-gray-700/10">
-                      <svg className="w-5 h-5 md:w-8 md:h-8 text-gray-600/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    </div>
-                    <p className="mt-1 md:mt-3 text-gray-700/50 text-[9px] md:text-xs font-medium">Paslanmış demir kapı</p>
-                  </div>
-                }
-                afterContent={
-                  <div className="flex flex-col items-center justify-center w-full h-full p-3 md:p-6">
-                    <Image src="/doors/celik-5.jpg" alt="Olympus Guard" width={80} height={120} className="w-12 md:w-20 h-auto rounded-md drop-shadow-2xl" />
-                    <p className="mt-1 md:mt-3 text-white/60 text-[9px] md:text-xs font-medium">Olympus Guard</p>
-                  </div>
-                }
-                caption="Müstakil Ev Güvenlik Kapısı"
-                location="Mersin, Yenişehir"
-              />
-            </div>
-          </div>
+          )}
 
           <div className="mt-10 text-center animate-on-scroll">
             <a href={waLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-4 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20BD5A] transition-all wa-glow text-[15px]">
@@ -593,8 +581,8 @@ export default function HomePage() {
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               WhatsApp ile Hemen Yazın
             </a>
-            <a href="tel:+903221234567" className="inline-flex items-center gap-2 px-8 py-4 font-bold rounded-xl transition-all cta-gold text-[15px]" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
-              <Phone className="w-4 h-4" /> (0322) 123 45 67
+            <a href={`tel:${settings.phone.replace(/[^0-9+]/g, "")}`} className="inline-flex items-center gap-2 px-8 py-4 font-bold rounded-xl transition-all cta-gold text-[15px]" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
+              <Phone className="w-4 h-4" /> {settings.phone}
             </a>
             <Link href="/iletisim" className="inline-flex items-center gap-2 px-8 py-4 text-[var(--text-primary)] font-bold rounded-xl transition-all text-[15px]" style={{ border: '1px solid var(--border-light)' }}>
               Teklif Formu <ArrowRight className="w-4 h-4" />

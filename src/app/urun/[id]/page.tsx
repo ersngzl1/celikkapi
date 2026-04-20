@@ -24,28 +24,43 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import BeforeAfter from "@/components/BeforeAfter";
+import { useSettings } from "@/lib/useSettings";
 
 export default function UrunDetay() {
   const params = useParams();
-  const id = Number(params.id);
+  const idOrSlug = params.id as string;
+  const { settings } = useSettings();
   const [door, setDoor] = useState<any>(null);
   const [relatedDoors, setRelatedDoors] = useState<any[]>([]);
+  const [galleryExamples, setGalleryExamples] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [productRes, allRes] = await Promise.all([
-          fetch(`/api/products/${id}`),
+        const [productRes, allRes, galleryRes] = await Promise.all([
+          fetch(`/api/products/${idOrSlug}`),
           fetch("/api/products"),
+          fetch("/api/gallery"),
         ]);
         if (productRes.ok) {
           const data = await productRes.json();
           setDoor(data);
           if (allRes.ok) {
             const all = await allRes.json();
-            setRelatedDoors(all.filter((d: any) => d.id !== id && d.category === data.category).slice(0, 3));
+            setRelatedDoors(all.filter((d: any) => d.id !== data.id && d.category === data.category).slice(0, 3));
+          }
+        }
+        if (galleryRes.ok) {
+          const gallery = await galleryRes.json();
+          if (Array.isArray(gallery)) {
+            const parsed = gallery.map((item: any) => {
+              let meta: any = {};
+              try { meta = typeof item.category === "string" ? JSON.parse(item.category) : item.category || {}; } catch {}
+              return { ...item, meta };
+            }).filter((item: any) => item.meta.beforeImage && item.src);
+            setGalleryExamples(parsed.slice(0, 3));
           }
         }
       } catch (e) {
@@ -55,7 +70,7 @@ export default function UrunDetay() {
       }
     };
     load();
-  }, [id]);
+  }, [idOrSlug]);
 
   if (loading) {
     return (
@@ -76,19 +91,9 @@ export default function UrunDetay() {
     );
   }
 
-  // Galeri resimleri - ana kapı fotoğrafı + 3 AI görseli
+  // Galeri resimleri - sadece gerçek kapı fotoğrafı
   const galleryImages = [
     { type: "main", src: door.image, label: "Ana Görünüm" },
-    { type: "ai", src: "/doors/celik-1.jpg", label: "Montaj Örneği 1" },
-    { type: "ai", src: "/doors/celik-1.jpg", label: "Montaj Örneği 2" },
-    { type: "ai", src: "/doors/celik-1.jpg", label: "Montaj Örneği 3" },
-  ];
-
-  // Öncesi-Sonrası montaj örnekleri
-  const installationExamples = [
-    { title: "Modern Ev Girişi", before: "/doors/celik-1.jpg", after: "/doors/celik-1.jpg" },
-    { title: "Apartman Dairesi", before: "/doors/celik-1.jpg", after: "/doors/celik-1.jpg" },
-    { title: "Villa Girişi", before: "/doors/celik-1.jpg", after: "/doors/celik-1.jpg" },
   ];
 
   // relatedDoors loaded via useEffect above
@@ -234,7 +239,7 @@ export default function UrunDetay() {
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
               <a
-                href="https://wa.me/903221234567?text=Merhabalar%2C%20%C3%A7elik%20kap%C4%B1%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum."
+                href={`https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(settings.whatsappMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20BD5A] transition-colors shadow-md wa-glow text-[15px]"
@@ -243,7 +248,7 @@ export default function UrunDetay() {
                 WhatsApp ile Yazın
               </a>
               <a
-                href="tel:+903221234567"
+                href={`tel:${settings.phone.replace(/[^0-9+]/g, "")}`}
                 className="flex items-center justify-center gap-2 px-6 py-4 font-bold rounded-xl transition-colors cta-gold"
                 style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}
               >
@@ -306,36 +311,38 @@ export default function UrunDetay() {
         </div>
 
         {/* Installation Examples - Before & After */}
-        <div style={{ marginTop: '64px' }}>
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4" style={{ background: 'var(--gold-badge-bg)', border: '1px solid var(--gold-badge-border)' }}>
-              <Sparkles className="w-4 h-4 text-[var(--gold)]" />
-              <span className="text-xs font-semibold text-[var(--gold)]">Montaj Örnekleri</span>
-            </div>
-            <h3 className="font-serif text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-2">
-              Evinizde Nasıl Görünecek?
-            </h3>
-            <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
-              {door.name} kapısının farklı ev tiplerine montajlanmış halini göreceksiniz. Kaydırarak öncesi ve sonrasını karşılaştırın.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {installationExamples.map((example, idx) => (
-              <div key={idx} className="rounded-2xl overflow-hidden" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-                <div className="aspect-[3/4] relative">
-                  <BeforeAfter before={example.before} after={example.after} />
-                </div>
-                <div style={{ padding: '20px' }}>
-                  <h4 className="font-serif text-lg font-bold text-[var(--text-primary)] mb-2">{example.title}</h4>
-                  <p className="text-sm text-[var(--text-secondary)]">
-                    Orta bölümü kaydırarak montaj öncesi ve sonrasını karşılaştırın
-                  </p>
-                </div>
+        {galleryExamples.length > 0 && (
+          <div style={{ marginTop: '64px' }}>
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4" style={{ background: 'var(--gold-badge-bg)', border: '1px solid var(--gold-badge-border)' }}>
+                <Sparkles className="w-4 h-4 text-[var(--gold)]" />
+                <span className="text-xs font-semibold text-[var(--gold)]">Montaj Örnekleri</span>
               </div>
-            ))}
+              <h3 className="font-serif text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-2">
+                Evinizde Nasıl Görünecek?
+              </h3>
+              <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
+                Montaj çalışmalarımızdan örnekler. Kaydırarak öncesi ve sonrasını karşılaştırın.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {galleryExamples.map((item, idx) => (
+                <div key={item.id || idx} className="rounded-2xl overflow-hidden" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+                  <div className="aspect-[3/4] relative">
+                    <BeforeAfter before={item.meta.beforeImage} after={item.src} />
+                  </div>
+                  <div style={{ padding: '20px' }}>
+                    <h4 className="font-serif text-lg font-bold text-[var(--text-primary)] mb-2">{item.alt || item.meta.doorModel || "Montaj Örneği"}</h4>
+                    <p className="text-sm text-[var(--text-secondary)]">
+                      {item.meta.location ? `${item.meta.location} — ` : ""}Kaydırarak öncesi ve sonrasını karşılaştırın
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Related */}
         {relatedDoors.length > 0 && (
@@ -350,7 +357,7 @@ export default function UrunDetay() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {relatedDoors.map((d) => (
-                <Link key={d.id} href={`/urun/${d.id}`} className="group block">
+                <Link key={d.id} href={`/urun/${d.slug || d.id}`} className="group block">
                   <div className="relative rounded-2xl overflow-hidden card group-hover:-translate-y-1 transition-all duration-500">
                     <div className="aspect-[3/4] relative overflow-hidden" style={{ background: 'var(--bg-card)' }}>
                       <Image src={d.image} alt={d.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="(max-width: 640px) 100vw, 33vw" />

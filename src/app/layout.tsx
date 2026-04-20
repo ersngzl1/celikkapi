@@ -22,11 +22,16 @@ export const metadata: Metadata = {
   description:
     "Adana ve çevre illerde çelik kapı satış ve montaj. Best Pen güvencesiyle kaliteli çelik kapılar. AI ile kapınızı evinizde deneyin. TSE, CE, ISO 9001 belgeli.",
   keywords: [
-    "adana çelik kapı", "çelik kapı adana", "adana güvenlik kapısı",
-    "çelik kapı montaj adana", "best kapı", "best pen",
-    "mersin çelik kapı", "hatay çelik kapı", "osmaniye çelik kapı",
-    "adana kapıcı", "çelik kapı fiyatları", "oda kapısı adana",
-    "villa kapısı adana", "apartman kapısı", "çelik kapı modelleri",
+    "adana çelik kapı", "çelik kapı adana", "adana çelik kapı fiyatları",
+    "adana güvenlik kapısı", "çelik kapı montaj adana", "çelik kapı tamiri adana",
+    "best kapı adana", "best pen çelik kapı",
+    "adana oda kapısı", "oda kapısı fiyatları adana", "iç oda kapısı modelleri",
+    "villa kapısı adana", "apartman çelik kapı", "bina giriş kapısı adana",
+    "çelik kapı modelleri 2025", "en iyi çelik kapı markaları",
+    "çelik kapı kilidi", "çelik kapı yalıtım", "çelik kapı montajı nasıl yapılır",
+    "mersin çelik kapı", "hatay çelik kapı", "osmaniye çelik kapı", "tarsus çelik kapı",
+    "çukurova çelik kapı", "seyhan çelik kapı", "yüreğir çelik kapı",
+    "çelik kapı fiyatları", "ucuz çelik kapı adana", "kaliteli çelik kapı",
   ],
   authors: [{ name: "Best Kapı" }],
   creator: "Best Kapı",
@@ -101,6 +106,15 @@ const jsonLd = {
   priceRange: "$$",
   image: "https://bestkapi.com/doors/celik-1.jpg",
   areaServed: ["Adana", "Mersin", "Hatay", "Osmaniye", "Tarsus", "Ceyhan"],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Çelik Kapı Modelleri",
+    itemListElement: [
+      { "@type": "OfferCatalog", name: "Çelik Kapılar" },
+      { "@type": "OfferCatalog", name: "Oda Kapıları" },
+      { "@type": "OfferCatalog", name: "Villa Kapıları" },
+    ],
+  },
 };
 
 export default function RootLayout({

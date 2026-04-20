@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
-import { doors } from "@/data/doors";
+import { initDB, productQueries, generateSlug } from "@/lib/db-vercel";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://bestkapi.com";
 
   const staticPages = [
@@ -12,12 +12,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/iletisim`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
   ];
 
-  const productPages = doors.map((door) => ({
-    url: `${baseUrl}/urun/${door.id}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
-
-  return [...staticPages, ...productPages];
+  try {
+    await initDB();
+    const products = await productQueries.getAll();
+    const productPages = products.map((product: any) => ({
+      url: `${baseUrl}/urun/${product.slug || generateSlug(product.name)}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }));
+    return [...staticPages, ...productPages];
+  } catch {
+    return staticPages;
+  }
 }

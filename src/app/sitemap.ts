@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
-import { initDB, productQueries, generateSlug } from "@/lib/db-vercel";
+
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://bestkapi.com";
@@ -13,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
+    const { initDB, productQueries, generateSlug } = await import("@/lib/db-vercel");
     await initDB();
     const products = await productQueries.getAll();
     const productPages = products.map((product: any) => ({

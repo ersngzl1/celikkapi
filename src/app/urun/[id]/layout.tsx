@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { initDB, productQueries, generateSlug } from "@/lib/db-vercel";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id: idOrSlug } = await params;
 
   try {
+    const { initDB, productQueries, generateSlug } = await import("@/lib/db-vercel");
     await initDB();
     const numId = parseInt(idOrSlug);
     const product = !isNaN(numId)
@@ -40,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       },
     };
   } catch {
-    return { title: "Ürün Detayı" };
+    return { title: "Ürün Detayı | Best Kapı Adana" };
   }
 }
 

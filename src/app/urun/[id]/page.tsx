@@ -59,8 +59,8 @@ export default function UrunDetay() {
               let meta: any = {};
               try { meta = typeof item.category === "string" ? JSON.parse(item.category) : item.category || {}; } catch {}
               return { ...item, meta };
-            }).filter((item: any) => item.meta.beforeImage && item.src);
-            setGalleryExamples(parsed.slice(0, 3));
+            });
+            setGalleryExamples(parsed.filter((item: any) => item.meta.beforeImage && item.src).slice(0, 3));
           }
         }
       } catch (e) {

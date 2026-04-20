@@ -55,12 +55,12 @@ export default function HomePage() {
     fetch("/api/gallery")
       .then(r => r.json())
       .then(data => {
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           const parsed = data.map((item: any) => {
             let meta: any = {};
             try { meta = typeof item.category === "string" ? JSON.parse(item.category) : item.category || {}; } catch {}
             return { ...item, meta };
-          }).filter((item: any) => item.meta.beforeImage && item.src);
+          });
           setGalleryItems(parsed.slice(0, 3));
         }
       })
@@ -371,12 +371,26 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               {galleryItems.map((item, idx) => (
                 <div key={item.id || idx}>
-                  <BeforeAfter
-                    before={item.meta.beforeImage}
-                    after={item.src}
-                    caption={item.alt || item.meta.doorModel || "Montaj Örneği"}
-                    location={item.meta.location || ""}
-                  />
+                  {item.meta.beforeImage ? (
+                    <BeforeAfter
+                      before={item.meta.beforeImage}
+                      after={item.src}
+                      caption={item.alt || item.meta.doorModel || "Montaj Örneği"}
+                      location={item.meta.location || ""}
+                    />
+                  ) : (
+                    <div className="group">
+                      <div className="aspect-[3/4] rounded-2xl overflow-hidden relative" style={{ border: '1px solid var(--border)' }}>
+                        <Image src={item.src} alt={item.alt || "Galeri"} fill className="object-cover" sizes="(max-width: 640px) 100vw, 33vw" />
+                      </div>
+                      {(item.alt || item.meta.location) && (
+                        <div className="mt-3 px-1">
+                          {item.alt && <p className="text-sm font-semibold text-[var(--text-primary)]">{item.alt}</p>}
+                          {item.meta.location && <p className="text-xs text-[var(--text-muted)]">{item.meta.location}</p>}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

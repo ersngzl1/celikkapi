@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import BeforeAfter from "@/components/BeforeAfter";
 import { useSettings } from "@/lib/useSettings";
+import { useContent } from "@/lib/useContent";
 
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -27,9 +28,32 @@ function useScrollReveal() {
   return ref;
 }
 
+// Defaults — used when CMS content is empty
+const defaultFeatures = [
+  { title: "Üstün Güvenlik", desc: "Çok noktalı kilit sistemi ve özel çelik alaşım ile eviniz her an güvende.", stat: "%99.8", statLabel: "Güvenlik Oranı" },
+  { title: "Akıllı Teknoloji", desc: "Parmak izi, şifre ve kartlı giriş seçenekleriyle modern güvenlik çözümleri.", stat: "3+", statLabel: "Kilit Teknolojisi" },
+  { title: "Tam İzolasyon", desc: "Isı, ses ve su yalıtımlı özel dolgu malzemesiyle dört mevsim konfor.", stat: "%85", statLabel: "Enerji Tasarrufu" },
+  { title: "Profesyonel Montaj", desc: "Uzman ekibimiz tarafından aynı gün kurulum ve 2 yıl montaj garantisi.", stat: "1 Gün", statLabel: "Kurulum Süresi" },
+];
+const defaultStats = [
+  { value: "150+", label: "Mutlu Müşteri" },
+  { value: "20 Yıl", label: "Sektör Tecrübesi" },
+  { value: "4.9/5", label: "Müşteri Puanı" },
+  { value: "7/24", label: "Destek Hattı" },
+];
+const defaultFaq = [
+  { q: "Çelik kapı montajı ne kadar sürer?", a: "Profesyonel ekibimiz ortalama 2-3 saat içinde montajı tamamlar." },
+  { q: "Çelik kapı fiyatları neye göre belirlenir?", a: "Model, kilit sistemi, boyut ve özel taleplere göre fiyatlandırma yapılır." },
+  { q: "Garanti süresi ne kadardır?", a: "Tüm çelik kapılarımız 2 yıl üretici garantisi altındadır." },
+  { q: "Hangi bölgelere hizmet veriyorsunuz?", a: "Adana, Mersin, Hatay, Osmaniye ve Tarsus'a hizmet veriyoruz." },
+  { q: "Eski kapımı değiştirebilir misiniz?", a: "Evet, eski kapınızı söküp yeni çelik kapınızı aynı gün monte ediyoruz." },
+];
+const defaultTrust = ["TSE Belgeli Üretim", "CE Sertifikalı", "ISO 9001 Kalite", "Ücretsiz Keşif", "Aynı Gün Montaj", "2 Yıl Garanti", "7/24 Destek", "Kredi Kartına Taksit"];
+
 export default function HomePage() {
   const revealRef = useScrollReveal();
   const { settings } = useSettings();
+  const { content } = useContent("home");
   const [featuredDoors, setFeaturedDoors] = useState<any[]>([]);
   const [roomDoors, setRoomDoors] = useState<any[]>([]);
   const [totalProducts, setTotalProducts] = useState(0);
@@ -43,8 +67,9 @@ export default function HomePage() {
         if (Array.isArray(data) && data.length > 0) {
           setTotalProducts(data.length);
           const featured = data.filter((p: any) => p.featured);
-          const steelDoors = data.filter((p: any) => p.category === "Çelik Kapı" || p.category === "celik");
-          const roomOnes = data.filter((p: any) => p.category === "Oda Kapısı" || p.category === "oda");
+          const roomOnes = data.filter((p: any) => p.category === "oda" || p.category === "Oda Kapısı");
+          const steelDoors = data.filter((p: any) => p.category !== "oda" && p.category !== "Oda Kapısı");
+          // Featured varsa featured, yoksa çelik kapıları göster
           setFeaturedDoors(featured.length > 0 ? featured.slice(0, 6) : steelDoors.slice(0, 6));
           setRoomDoors(roomOnes.slice(0, 6));
         }
@@ -66,6 +91,13 @@ export default function HomePage() {
       })
       .catch(() => {});
   }, []);
+  // CMS content with fallbacks
+  const hero = content.hero || {};
+  const features = content.features || defaultFeatures;
+  const stats = content.stats || defaultStats;
+  const faq = content.faq || defaultFaq;
+  const trustItems = content.trust || defaultTrust;
+
   const waLink = `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(settings.whatsappMessage)}`;
 
   return (
@@ -96,12 +128,12 @@ export default function HomePage() {
               </div>
 
               <h1 className="font-serif text-[3.2rem] sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[0.92] mb-5 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-                <span className="text-[var(--text-primary)]">Adana&apos;da</span><br />
-                <span className="text-gold">Çelik Kapı</span>
+                <span className="text-[var(--text-primary)]">{hero.titleLine1 || "Adana'da"}</span><br />
+                <span className="text-gold">{hero.titleLine2 || "Çelik Kapı"}</span>
               </h1>
 
               <p className="text-lg md:text-xl text-[var(--text-secondary)] max-w-xl leading-relaxed mb-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-                Best Kapı ile evinizin güvenliğini ve estetiğini bir üst seviyeye taşıyın. Adana ve çevre illerde kaliteli çelik kapı çözümleri.
+                {hero.subtitle || "Best Kapı ile evinizin güvenliğini ve estetiğini bir üst seviyeye taşıyın. Adana ve çevre illerde kaliteli çelik kapı çözümleri."}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 mb-8 animate-fade-up" style={{ animationDelay: "0.3s" }}>
@@ -126,12 +158,10 @@ export default function HomePage() {
 
             <div className="hidden lg:block">
               <div className="w-[280px] space-y-4">
-                {[
-                  { value: "150+", label: "Kapı Modeli", icon: Shield },
-                  { value: "20 Yıl", label: "Sektör Tecrübesi", icon: Award },
-                  { value: "4.9/5", label: "Müşteri Puanı", icon: Star },
-                  { value: "7/24", label: "Servis Desteği", icon: Clock },
-                ].map((stat, idx) => (
+                {[Shield, Award, Star, Clock].map((Icon, idx) => {
+                  const s = stats[idx] || { value: "", label: "" };
+                  return { icon: Icon, ...s };
+                }).map((stat, idx) => (
                   <div key={stat.label} className="card-gold flex items-center gap-4 group animate-slide-up" style={{ padding: '16px', animationDelay: `${0.3 + idx * 0.12}s`, opacity: 0 }}>
                     <div className="flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-all duration-300" style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--gold-badge-bg)', border: '1px solid var(--stat-border)' }}>
                       <stat.icon className="w-5 h-5 text-[var(--gold)]" />
@@ -415,7 +445,7 @@ export default function HomePage() {
         <div className="flex animate-marquee whitespace-nowrap">
           {[0,1].map((setIdx) => (
             <div key={setIdx} className="flex items-center gap-8 mr-8">
-              {["TSE Belgeli Üretim","CE Sertifikalı","ISO 9001 Kalite","Adana ve Çevre İller","Best Pen Güvencesi","20 Yıla Kadar Garanti","7/24 Servis Desteği","Profesyonel Montaj Ekibi"].map((text) => (
+              {trustItems.map((text: string) => (
                 <span key={`${setIdx}-${text}`} className="flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--bg-primary)' }}>
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--text-muted)' }} />{text}
                 </span>
@@ -438,12 +468,10 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 stagger-children">
-            {[
-              { icon: Lock, title: "Üstün Güvenlik", desc: "Çok noktalı kilit sistemleri ve zırhlı yapı ile eviniz her an güvende. TSE onaylı kilit teknolojisi.", stat: "3x", statLabel: "Daha güvenli" },
-              { icon: Fingerprint, title: "Akıllı Teknoloji", desc: "Parmak izi, dijital şifre, kartlı giriş ve Wi-Fi uzaktan kumanda ile modern yaşam.", stat: "5+", statLabel: "Giriş yöntemi" },
-              { icon: Thermometer, title: "Tam İzolasyon", desc: "A++ sınıfı ısı ve ses yalıtımı. Adana'nın sıcak yazlarında enerji tasarrufu sağlayın.", stat: "A++", statLabel: "Yalıtım sınıfı" },
-              { icon: Wrench, title: "Profesyonel Montaj", desc: "Uzman ekibimiz ile kusursuz montaj. Adana ve çevre illerde hizmet veriyoruz.", stat: "7/24", statLabel: "Servis desteği" },
-            ].map((f) => (
+            {[Lock, Fingerprint, Thermometer, Wrench].map((Icon, idx) => {
+              const f = features[idx] || { title: "", desc: "", stat: "", statLabel: "" };
+              return { icon: Icon, ...f };
+            }).map((f) => (
               <div key={f.title} className="animate-on-scroll card-gold group" style={{ padding: '28px' }}>
                 <div className="flex items-center justify-between" style={{ marginBottom: '16px' }}>
                   <div
@@ -557,19 +585,13 @@ export default function HomePage() {
             </h2>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }} className="stagger-children">
-            {[
-              { q: "Adana dışına da hizmet veriyor musunuz?", a: "Evet, Adana merkez dışında Mersin, Hatay, Osmaniye, Tarsus ve Ceyhan başta olmak üzere çevre illere de hizmet veriyoruz." },
-              { q: "Montaj ne kadar sürer?", a: "Standart tek kanatlı kapılarda montaj 2-3 saat sürer. Çift kanatlı ve özel modellerde bu süre 4-5 saate çıkabilir." },
-              { q: "Garanti kapsamı nedir?", a: "Tüm kapılarımız model ve seriye göre 5 ile 20 yıl arasında garanti kapsamındadır. Kilit, menteşe ve mekanik aksamlar dahildir." },
-              { q: "Taksit seçenekleri var mı?", a: "Evet, anlaşmalı bankalarımız ile taksit imkanı sunuyoruz. Detaylar için WhatsApp'tan bize yazın." },
-              { q: "Kapıyı evinizde görüntüleme nasıl çalışır?", a: "Evinizin giriş fotoğrafını yükleyin, kataloğumuzdan bir kapı modeli seçin, sürükleyerek kapıyı yerine koyun. Tamamen ücretsiz!" },
-            ].map((faq) => (
-              <details key={faq.q} className="animate-on-scroll card-gold group">
+            {faq.map((item: any) => (
+              <details key={item.q} className="animate-on-scroll card-gold group">
                 <summary className="flex items-center justify-between cursor-pointer list-none font-bold text-sm text-[var(--text-primary)] hover:text-[var(--gold-light)] transition-colors" style={{ padding: '20px 24px' }}>
-                  {faq.q}
+                  {item.q}
                   <ChevronRight className="w-4 h-4 text-[var(--text-muted)] transition-transform duration-300 group-open:rotate-90 flex-shrink-0" style={{ marginLeft: '16px' }} />
                 </summary>
-                <div className="text-sm text-[var(--text-secondary)] leading-relaxed" style={{ padding: '0 24px 20px', marginTop: '-4px' }}>{faq.a}</div>
+                <div className="text-sm text-[var(--text-secondary)] leading-relaxed" style={{ padding: '0 24px 20px', marginTop: '-4px' }}>{item.a}</div>
               </details>
             ))}
           </div>

@@ -105,6 +105,17 @@ export async function initDB() {
     `;
 
     await sql`
+      CREATE TABLE IF NOT EXISTS content (
+        id SERIAL PRIMARY KEY,
+        page TEXT NOT NULL,
+        section TEXT NOT NULL,
+        data TEXT NOT NULL DEFAULT '{}',
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(page, section)
+      )
+    `;
+
+    await sql`
       CREATE TABLE IF NOT EXISTS categories (
         id SERIAL PRIMARY KEY,
         value TEXT UNIQUE NOT NULL,
@@ -319,5 +330,32 @@ export const imageQueries = {
   get: async (hash: string) => {
     const result = await sql`SELECT data, mime FROM images WHERE hash = ${hash}`;
     return result.rows?.[0];
+  },
+};
+
+// Content queries (CMS)
+export const contentQueries = {
+  getByPage: async (page: string) => {
+    const result = await sql`SELECT section, data FROM content WHERE page = ${page}`;
+    const content: Record<string, any> = {};
+    for (const row of result.rows || []) {
+      try { content[row.section as string] = JSON.parse(row.data as string); } catch { content[row.section as string] = row.data; }
+    }
+    return content;
+  },
+
+  get: async (page: string, section: string) => {
+    const result = await sql`SELECT data FROM content WHERE page = ${page} AND section = ${section}`;
+    const row = result.rows?.[0];
+    if (!row) return null;
+    try { return JSON.parse(row.data as string); } catch { return row.data; }
+  },
+
+  save: async (page: string, section: string, data: any) => {
+    const jsonData = typeof data === "string" ? data : JSON.stringify(data);
+    await sql`
+      INSERT INTO content (page, section, data) VALUES (${page}, ${section}, ${jsonData})
+      ON CONFLICT (page, section) DO UPDATE SET data = EXCLUDED.data, updatedAt = NOW()
+    `;
   },
 };

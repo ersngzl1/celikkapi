@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Package, MessageSquare, Settings,
   Images, Star, LogOut, Menu, X, Shield, ExternalLink,
-  Bell, Brain, ChevronRight, Palette,
+  Bell, Brain, ChevronRight, Palette, FileText,
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -47,6 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { href: "/admin/urunler", label: "Ürünler", icon: Package },
         { href: "/admin/galeri", label: "Galeri", icon: Images },
         { href: "/admin/yorumlar", label: "Yorumlar", icon: Star },
+        { href: "/admin/icerikler", label: "Sayfa İçerikleri", icon: FileText },
       ],
     },
     {

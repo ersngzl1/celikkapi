@@ -1,19 +1,53 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
 import {
   Shield, Award, Users, MapPin, Phone, ArrowRight, CheckCircle2, Star, Clock, Wrench, Building2, Sparkles,
 } from "lucide-react";
 import PhoneCTA from "@/components/PhoneCTA";
+import { useContent } from "@/lib/useContent";
 
-export const metadata: Metadata = {
-  title: "Hakkımızda | Best Kapı - Adana Çelik Kapı",
-  description:
-    "Best Kapı, Best Pen güvencesiyle Adana ve çevre illerde çelik kapı satış ve montaj hizmeti vermektedir. Yılların tecrübesi, TSE belgeli üretim ve profesyonel montaj.",
-  keywords:
-    "best kapı hakkında, adana çelik kapı firması, best pen, adana güvenlik kapısı, çelik kapı adana",
-};
+const defaultStats = [
+  { value: "150+", label: "Kapı Modeli" },
+  { value: "20+ Yıl", label: "Sektör Tecrübesi" },
+  { value: "4.9/5", label: "Müşteri Memnuniyeti" },
+  { value: "7/24", label: "Servis Desteği" },
+];
+
+const defaultValues = [
+  { title: "TSE Belgeli Üretim", desc: "Tüm kapılarımız TSE standartlarına uygun olarak üretilmektedir." },
+  { title: "Profesyonel Montaj Ekibi", desc: "Deneyimli montaj ekibimiz ile kapınız kusursuz bir şekilde takılır." },
+  { title: "Satış Sonrası Destek", desc: "7/24 servis desteği ve 20 yıla kadar garanti ile her zaman yanınızdayız." },
+  { title: "Geniş Ürün Yelpazesi", desc: "150'den fazla model ile her bütçeye ve zevke uygun çelik kapı seçenekleri." },
+  { title: "Bölgesel Güç", desc: "Adana, Mersin, Hatay ve Osmaniye'de güçlü hizmet ağı." },
+];
+
+const defaultStory = [
+  "Best Pen firmasının güçlü altyapısı ve uzun yıllara dayanan tecrübesi ile kurulan Best Kapı, Adana ve çevre illerde çelik kapı sektöründe kalite ve güvenin adresi olmayı hedeflemektedir.",
+  "Adana'nın iklim koşullarına uygun, yüksek ısı yalıtımlı ve dayanıklı çelik kapı modellerimiz ile evinizin güvenliğini en üst seviyeye taşıyoruz. TSE, CE ve ISO 9001 belgelerimiz ile kalite standartlarımızı belgeleyen bir firma olarak, her kapıda aynı titizliği gösteriyoruz.",
+  "Profesyonel montaj ekibimiz, satış sonrası servis ve garanti hizmetlerimiz ile müşterilerimizin yanında olmaya devam ediyoruz. Adana merkez, Mersin, Hatay, Osmaniye ve çevre illere hizmet ağımızı genişleterek bölgenin en güvenilir çelik kapı markası olma yolunda ilerliyoruz.",
+];
+
+const defaultServiceAreas = [
+  { city: "Adana Merkez", detail: "Seyhan, Çukurova, Yüreğir, Sarıçam" },
+  { city: "Mersin", detail: "Yenişehir, Toroslar, Mezitli" },
+  { city: "Hatay", detail: "Antakya, İskenderun, Defne" },
+  { city: "Osmaniye", detail: "Merkez, Kadirli, Düziçi" },
+  { city: "Tarsus", detail: "Mersin / Tarsus" },
+  { city: "Ceyhan", detail: "Adana / Ceyhan" },
+];
 
 export default function HakkimizdaPage() {
+  const { content } = useContent("about");
+
+  const stats = content.stats || defaultStats;
+  const values = content.values || defaultValues;
+  const story = content.story || defaultStory;
+  const serviceAreas = content.serviceAreas || defaultServiceAreas;
+
+  const statIcons = [Shield, Award, Star, Clock];
+  const valueIcons = [Shield, Users, Award, Wrench, Clock, Star];
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
@@ -44,28 +78,26 @@ export default function HakkimizdaPage() {
       <section style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border)' }}>
         <div className="container-custom" style={{ padding: '40px 24px' }}>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { value: "150+", label: "Kapı Modeli", icon: Shield },
-              { value: "20+ Yıl", label: "Sektör Tecrübesi", icon: Award },
-              { value: "4.9/5", label: "Müşteri Memnuniyeti", icon: Star },
-              { value: "7/24", label: "Servis Desteği", icon: Clock },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center group">
-                <div
-                  className="flex items-center justify-center mx-auto transition-all duration-300 group-hover:scale-110"
-                  style={{
-                    width: '56px', height: '56px', borderRadius: '16px',
-                    background: 'var(--gold-badge-bg)',
-                    border: '1px solid var(--stat-border)',
-                    marginBottom: '12px',
-                  }}
-                >
-                  <stat.icon className="w-6 h-6 text-[var(--gold)]" />
+            {stats.map((stat: any, idx: number) => {
+              const Icon = statIcons[idx] || Shield;
+              return (
+                <div key={stat.label} className="text-center group">
+                  <div
+                    className="flex items-center justify-center mx-auto transition-all duration-300 group-hover:scale-110"
+                    style={{
+                      width: '56px', height: '56px', borderRadius: '16px',
+                      background: 'var(--gold-badge-bg)',
+                      border: '1px solid var(--stat-border)',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <Icon className="w-6 h-6 text-[var(--gold)]" />
+                  </div>
+                  <div className="text-gold font-serif text-2xl md:text-3xl font-extrabold">{stat.value}</div>
+                  <div className="text-xs text-[var(--text-muted)]" style={{ marginTop: '4px' }}>{stat.label}</div>
                 </div>
-                <div className="text-gold font-serif text-2xl md:text-3xl font-extrabold">{stat.value}</div>
-                <div className="text-xs text-[var(--text-muted)]" style={{ marginTop: '4px' }}>{stat.label}</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -82,26 +114,14 @@ export default function HakkimizdaPage() {
                 Best Pen Güvencesiyle <span className="text-gold">Best Kapı</span>
               </h2>
               <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }} className="text-[var(--text-secondary)] leading-relaxed">
-                <p>
-                  Best Pen firmasının güçlü altyapısı ve uzun yıllara dayanan tecrübesi ile kurulan Best Kapı, Adana ve çevre illerde çelik kapı sektöründe kalite ve güvenin adresi olmayı hedeflemektedir.
-                </p>
-                <p>
-                  Adana&apos;nın iklim koşullarına uygun, yüksek ısı yalıtımlı ve dayanıklı çelik kapı modellerimiz ile evinizin güvenliğini en üst seviyeye taşıyoruz. TSE, CE ve ISO 9001 belgelerimiz ile kalite standartlarımızı belgeleyen bir firma olarak, her kapıda aynı titizliği gösteriyoruz.
-                </p>
-                <p>
-                  Profesyonel montaj ekibimiz, satış sonrası servis ve garanti hizmetlerimiz ile müşterilerimizin yanında olmaya devam ediyoruz. Adana merkez, Mersin, Hatay, Osmaniye ve çevre illere hizmet ağımızı genişleterek bölgenin en güvenilir çelik kapı markası olma yolunda ilerliyoruz.
-                </p>
+                {story.map((paragraph: string, idx: number) => (
+                  <p key={idx}>{paragraph}</p>
+                ))}
               </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {[
-                { title: "TSE Belgeli Üretim", desc: "Tüm kapılarımız TSE standartlarına uygun olarak üretilmektedir." },
-                { title: "Profesyonel Montaj Ekibi", desc: "Deneyimli montaj ekibimiz ile kapınız kusursuz bir şekilde takılır." },
-                { title: "Satış Sonrası Destek", desc: "7/24 servis desteği ve 20 yıla kadar garanti ile her zaman yanınızdayız." },
-                { title: "Geniş Ürün Yelpazesi", desc: "150'den fazla model ile her bütçeye ve zevke uygun çelik kapı seçenekleri." },
-                { title: "Bölgesel Güç", desc: "Adana, Mersin, Hatay ve Osmaniye'de güçlü hizmet ağı." },
-              ].map((item) => (
+              {values.map((item: any) => (
                 <div key={item.title} className="card-gold" style={{ padding: '20px', display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
                   <div style={{
                     width: '32px', height: '32px', borderRadius: '10px',
@@ -139,14 +159,7 @@ export default function HakkimizdaPage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              { city: "Adana Merkez", detail: "Seyhan, Çukurova, Yüreğir, Sarıçam" },
-              { city: "Mersin", detail: "Yenişehir, Toroslar, Mezitli" },
-              { city: "Hatay", detail: "Antakya, İskenderun, Defne" },
-              { city: "Osmaniye", detail: "Merkez, Kadirli, Düziçi" },
-              { city: "Tarsus", detail: "Mersin / Tarsus" },
-              { city: "Ceyhan", detail: "Adana / Ceyhan" },
-            ].map((area) => (
+            {serviceAreas.map((area: any) => (
               <div key={area.city} className="card-gold text-center" style={{ padding: '24px 16px' }}>
                 <div style={{
                   width: '40px', height: '40px', borderRadius: '12px',

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Upload,
@@ -15,7 +15,7 @@ import {
   RotateCcw,
   AlertTriangle,
 } from "lucide-react";
-import { doors } from "@/data/doors";
+import { doors as fallbackDoors } from "@/data/doors";
 import Image from "next/image";
 import { useSettings } from "@/lib/useSettings";
 
@@ -32,8 +32,17 @@ function AIDenemeContent() {
   const searchParams = useSearchParams();
   const doorParam = searchParams.get("door");
   const preselectedDoorId = doorParam ? Number(doorParam) : null;
+  const [doors, setDoors] = useState<any[]>(fallbackDoors);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data) && data.length > 0) setDoors(data); })
+      .catch(() => {});
+  }, []);
+
   const preselectedDoor = preselectedDoorId ? doors.find(d => d.id === preselectedDoorId) : null;
-  const initialDoorId = preselectedDoor ? preselectedDoor.id : doors[0].id;
+  const initialDoorId = preselectedDoor ? preselectedDoor.id : doors[0]?.id;
 
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);

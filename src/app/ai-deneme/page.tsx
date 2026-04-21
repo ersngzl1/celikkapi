@@ -115,6 +115,15 @@ function AIDenemeContent() {
 
   const currentDoor = doors.find((d) => d.id === selectedDoor) || doors[0];
 
+  // Show loading while doors are fetching
+  if (doorsLoading || doors.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--gold)' }} />
+      </div>
+    );
+  }
+
   const resizeImage = (dataUri: string, maxSize = 1024): Promise<string> => {
     return new Promise((resolve) => {
       const img = new window.Image();

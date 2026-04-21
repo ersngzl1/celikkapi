@@ -105,7 +105,7 @@ function KatalogContent() {
 
   const categoryStats = categories.slice(1).map(cat => ({
     ...cat,
-    count: doors.filter(d => d.category === cat.value).length
+    count: doorsList.filter(d => d.category === cat.value).length
   }));
 
   if (catalogLoading) {
@@ -133,7 +133,7 @@ function KatalogContent() {
             <div className="max-w-xl">
               <span className="animate-slide-up badge-gold" style={{ marginBottom: '20px', display: 'inline-flex' }}>
                 <Shield className="w-3.5 h-3.5" />
-                {doors.length} Model Mevcut
+                {doorsList.length} Model Mevcut
               </span>
               <h1 className="animate-slide-up-delay-1 font-serif text-4xl md:text-6xl font-extrabold text-[var(--text-primary)]" style={{ lineHeight: '1.1' }}>
                 Çelik Kapı<br />
@@ -169,17 +169,17 @@ function KatalogContent() {
                 <button
                   key={cat.value}
                   onClick={() => setCategory(cat.value)}
-                  className="stat-card group flex items-center gap-3 text-left"
+                  className="group flex items-center gap-3 text-left rounded-xl transition-all"
                   style={{
                     padding: '14px 20px',
-                    background: category === cat.value ? 'var(--stat-border)' : undefined,
-                    borderColor: category === cat.value ? 'var(--gold-badge-border)' : undefined,
+                    background: category === cat.value ? 'var(--gold-badge-bg)' : 'var(--bg-card)',
+                    border: category === cat.value ? '1px solid var(--gold-badge-border)' : '1px solid var(--border)',
                   }}
                 >
-                  <span className="text-2xl font-extrabold transition-colors" style={{ color: category === cat.value ? 'var(--gold-light)' : 'rgba(255,255,255,0.35)' }}>
+                  <span className="text-2xl font-extrabold transition-colors" style={{ color: category === cat.value ? 'var(--gold)' : 'var(--text-muted)' }}>
                     {cat.count}
                   </span>
-                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: category === cat.value ? 'white' : 'rgba(255,255,255,0.6)' }}>
+                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: category === cat.value ? 'var(--gold-light)' : 'var(--text-secondary)' }}>
                     {cat.label}
                   </span>
                 </button>

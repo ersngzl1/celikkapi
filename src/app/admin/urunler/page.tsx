@@ -535,19 +535,43 @@ export default function UrunlerPage() {
                   <label className="block text-xs font-semibold text-slate-600 mb-1">
                     Kategori
                   </label>
-                  <select
-                    value={form.category}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, category: e.target.value }))
-                    }
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500"
-                  >
-                    {categories.map((c) => (
-                      <option key={c.value} value={c.value}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex gap-2">
+                    <select
+                      value={form.category}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, category: e.target.value }))
+                      }
+                      className="flex-1 px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-red-500"
+                    >
+                      {categories.map((c) => (
+                        <option key={c.value} value={c.value}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const label = prompt("Yeni kategori adı:");
+                        if (!label) return;
+                        const value = label.toLowerCase().replace(/[^a-z0-9ğüşıöç]/g, "-").replace(/-+/g, "-");
+                        try {
+                          const res = await fetch("/api/admin/categories", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ value, label }),
+                          });
+                          if (res.ok) {
+                            setCategories(prev => [...prev, { value, label }]);
+                            setForm(p => ({ ...p, category: value }));
+                          }
+                        } catch {}
+                      }}
+                      className="px-3 py-2.5 border border-dashed border-slate-300 rounded-lg text-xs font-semibold text-slate-500 hover:border-red-400 hover:text-red-600 transition-colors whitespace-nowrap"
+                    >
+                      + Yeni
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1">

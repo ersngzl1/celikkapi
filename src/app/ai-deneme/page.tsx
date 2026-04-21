@@ -32,13 +32,18 @@ function AIDenemeContent() {
   const searchParams = useSearchParams();
   const doorParam = searchParams.get("door");
   const preselectedDoorId = doorParam ? Number(doorParam) : null;
-  const [doors, setDoors] = useState<any[]>(fallbackDoors);
+  const [doors, setDoors] = useState<any[]>([]);
+  const [doorsLoading, setDoorsLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/products")
       .then(r => r.json())
-      .then(data => { if (Array.isArray(data) && data.length > 0) setDoors(data); })
-      .catch(() => {});
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) setDoors(data);
+        else setDoors(fallbackDoors);
+      })
+      .catch(() => setDoors(fallbackDoors))
+      .finally(() => setDoorsLoading(false));
   }, []);
 
   const preselectedDoor = preselectedDoorId ? doors.find(d => d.id === preselectedDoorId) : null;
@@ -46,8 +51,22 @@ function AIDenemeContent() {
 
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [selectedDoor, setSelectedDoor] = useState<number>(initialDoorId);
-  const [showDoorPanel, setShowDoorPanel] = useState(!preselectedDoor);
+  const [selectedDoor, setSelectedDoor] = useState<number>(0);
+  const [showDoorPanel, setShowDoorPanel] = useState(true);
+
+  // Sync selectedDoor when doors load
+  useEffect(() => {
+    if (doors.length === 0) return;
+    if (preselectedDoorId) {
+      const found = doors.find(d => d.id === preselectedDoorId);
+      if (found) {
+        setSelectedDoor(found.id);
+        setShowDoorPanel(false);
+        return;
+      }
+    }
+    setSelectedDoor(doors[0]?.id || 0);
+  }, [doors, preselectedDoorId]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);

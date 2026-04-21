@@ -2,16 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { initDB } from "@/lib/db-vercel";
+import { sql } from "@vercel/postgres";
 
-const SETTINGS_FILE = join(process.cwd(), "settings.json");
-
-function getSettings() {
+async function getSettings() {
+  // Read from database (where admin panel saves them)
   try {
-    if (existsSync(SETTINGS_FILE)) {
-      return JSON.parse(readFileSync(SETTINGS_FILE, "utf-8"));
-    }
-  } catch {}
-  return {};
+    const result = await sql`SELECT key, value FROM settings`;
+    const settings: Record<string, string> = {};
+    result.rows?.forEach((row: any) => {
+      try {
+        settings[row.key] = JSON.parse(row.value);
+      } catch {
+        settings[row.key] = row.value;
+      }
+    });
+    return settings;
+  } catch {
+    // Fallback to file if DB not available
+    try {
+      const filePath = join(process.cwd(), "settings.json");
+      if (existsSync(filePath)) {
+        return JSON.parse(readFileSync(filePath, "utf-8"));
+      }
+    } catch {}
+    return {};
+  }
 }
 
 // Kapi gorselini public klasorunden oku ve data URI yap
@@ -73,7 +88,7 @@ export async function POST(req: NextRequest) {
 
   const { doorImage, userImage, doorName } = body;
 
-  const settings = getSettings();
+  const settings = await getSettings();
   const apiKey = settings.replicateApiKey;
 
   if (!apiKey) {
@@ -100,8 +115,21 @@ export async function POST(req: NextRequest) {
     .replace("{model_name}", doorName || "steel door");
 
   try {
-    // Kapi gorselini dosyadan oku - data URI olarak
-    const doorDataURI = getDoorImageDataURI(doorImage);
+    // Kapi gorselini oku - dosyadan veya API'den
+    let doorDataURI: string;
+    if (doorImage.startsWith("/api/images/")) {
+      // DB'den gelen image — fetch et
+      const baseUrl = req.nextUrl.origin;
+      const imgRes = await fetch(`${baseUrl}${doorImage}`);
+      if (!imgRes.ok) throw new Error("Kapı görseli alınamadı");
+      const buffer = Buffer.from(await imgRes.arrayBuffer());
+      const mime = imgRes.headers.get("content-type") || "image/jpeg";
+      doorDataURI = `data:${mime};base64,${buffer.toString("base64")}`;
+    } else if (doorImage.startsWith("data:")) {
+      doorDataURI = doorImage;
+    } else {
+      doorDataURI = getDoorImageDataURI(doorImage);
+    }
 
     console.log(`[generate-image] Door: ${doorImage} (dataURI len: ${doorDataURI.length})`);
     console.log(`[generate-image] User image dataURI len: ${userImage.length}`);

@@ -151,44 +151,67 @@ export async function initDB() {
   }
 }
 
+// Map PostgreSQL lowercase columns to camelCase
+function mapProduct(p: any) {
+  return {
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    series: p.series,
+    category: p.category,
+    color: p.color,
+    colorHex: p.colorhex ?? p.colorHex ?? "#1E293B",
+    thickness: p.thickness,
+    material: p.material,
+    lockSystem: p.locksystem ?? p.lockSystem ?? "",
+    dimensions: p.dimensions,
+    weight: p.weight,
+    insulation: p.insulation,
+    warranty: p.warranty,
+    description: p.description,
+    features: typeof p.features === "string" ? JSON.parse(p.features) : (p.features || []),
+    image: p.image,
+    inStock: p.instock ?? p.inStock ?? 1,
+    featured: p.featured ?? 0,
+    createdAt: p.createdat ?? p.createdAt,
+  };
+}
+
 // Product queries
 export const productQueries = {
   getAll: async () => {
     const result = await sql`SELECT * FROM products ORDER BY id DESC`;
-    return (result.rows || []).map((p: any) => ({
-      ...p,
-      features: typeof p.features === "string" ? JSON.parse(p.features) : p.features,
-    }));
+    return (result.rows || []).map(mapProduct);
   },
 
   getById: async (id: number) => {
     const result = await sql`SELECT * FROM products WHERE id = ${id}`;
     const row = result.rows?.[0];
-    if (row) {
-      row.features = typeof row.features === "string" ? JSON.parse(row.features) : row.features;
-    }
-    return row;
+    return row ? mapProduct(row) : null;
   },
 
   getBySlug: async (slug: string) => {
     const result = await sql`SELECT * FROM products WHERE slug = ${slug}`;
     const row = result.rows?.[0];
-    if (row) {
-      row.features = typeof row.features === "string" ? JSON.parse(row.features) : row.features;
-    }
-    return row;
+    return row ? mapProduct(row) : null;
   },
 
   create: async (product: any) => {
     const slug = product.slug || generateSlug(product.name);
+    const colorHex = product.colorHex || product.colorhex || "#1E293B";
+    const lockSystem = product.lockSystem || product.locksystem || "";
+    const inStock = product.inStock ?? product.instock ?? 1;
     await sql`
       INSERT INTO products (id, name, slug, series, category, color, colorHex, thickness, material, lockSystem, dimensions, weight, insulation, warranty, description, features, image, inStock)
-      VALUES (${product.id}, ${product.name}, ${slug}, ${product.series}, ${product.category}, ${product.color}, ${product.colorHex}, ${product.thickness}, ${product.material}, ${product.lockSystem}, ${product.dimensions}, ${product.weight}, ${product.insulation}, ${product.warranty}, ${product.description}, ${JSON.stringify(product.features || [])}, ${product.image}, ${product.inStock ? 1 : 0})
+      VALUES (${product.id}, ${product.name}, ${slug}, ${product.series}, ${product.category}, ${product.color}, ${colorHex}, ${product.thickness}, ${product.material}, ${lockSystem}, ${product.dimensions}, ${product.weight}, ${product.insulation}, ${product.warranty}, ${product.description}, ${JSON.stringify(product.features || [])}, ${product.image}, ${inStock ? 1 : 0})
     `;
   },
 
   update: async (id: number, product: any) => {
     const slug = product.slug || generateSlug(product.name);
+    const colorHex = product.colorHex || product.colorhex || "#1E293B";
+    const lockSystem = product.lockSystem || product.locksystem || "";
+    const inStock = product.inStock ?? product.instock ?? 1;
     await sql`
       UPDATE products SET
         name = ${product.name},
@@ -196,10 +219,10 @@ export const productQueries = {
         series = ${product.series},
         category = ${product.category},
         color = ${product.color},
-        colorHex = ${product.colorHex},
+        colorHex = ${colorHex},
         thickness = ${product.thickness},
         material = ${product.material},
-        lockSystem = ${product.lockSystem},
+        lockSystem = ${lockSystem},
         dimensions = ${product.dimensions},
         weight = ${product.weight},
         insulation = ${product.insulation},
@@ -207,7 +230,7 @@ export const productQueries = {
         description = ${product.description},
         features = ${JSON.stringify(product.features || [])},
         image = ${product.image},
-        inStock = ${product.inStock ? 1 : 0}
+        inStock = ${inStock ? 1 : 0}
       WHERE id = ${id}
     `;
   },

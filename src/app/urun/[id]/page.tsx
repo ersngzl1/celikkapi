@@ -21,6 +21,8 @@ import {
   Star,
   ChevronLeft,
   Loader2,
+  ZoomIn,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import BeforeAfter from "@/components/BeforeAfter";
@@ -35,6 +37,7 @@ export default function UrunDetay() {
   const [galleryExamples, setGalleryExamples] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const [zoomOpen, setZoomOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -98,6 +101,13 @@ export default function UrunDetay() {
 
   // relatedDoors loaded via useEffect above
 
+  // Deterministic rating based on product id
+  const idNum = typeof door.id === "number" ? door.id : parseInt(String(door.id), 10) || 0;
+  const ratingHash = ((idNum * 2654435761) >>> 0) % 1000;
+  const rating = 4.5 + (ratingHash % 6) / 10; // 4.5 - 5.0
+  const starCount = Math.round(rating);
+  const reviewCount = 12 + (ratingHash % 85); // 12 - 96
+
   const specs = [
     { icon: Ruler, label: "Boyut", value: door.dimensions },
     { icon: Weight, label: "Ağırlık", value: door.weight },
@@ -124,22 +134,38 @@ export default function UrunDetay() {
           <div>
             <div className="sticky top-20 space-y-4">
               {/* Main Image */}
-              <div className="aspect-[3/4] rounded-2xl relative overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+              <div
+                className="aspect-[3/4] rounded-2xl relative overflow-hidden cursor-zoom-in group/img"
+                style={{ border: '1px solid var(--border)' }}
+                onClick={() => setZoomOpen(true)}
+              >
                 <Image src={galleryImages[activeImageIdx].src} alt={galleryImages[activeImageIdx].label} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" priority />
 
+                {/* Zoom hint */}
+                <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 pointer-events-none">
+                  <div className="px-4 py-2 rounded-full flex items-center gap-2" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
+                    <ZoomIn className="w-4 h-4 text-white" />
+                    <span className="text-xs text-white font-medium">Yakınlaştır</span>
+                  </div>
+                </div>
+
                 {/* Navigation Arrows */}
-                <button
-                  onClick={() => setActiveImageIdx((activeImageIdx - 1 + galleryImages.length) % galleryImages.length)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full transition-all" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)' }}
-                >
-                  <ChevronLeft className="w-5 h-5 text-white" />
-                </button>
-                <button
-                  onClick={() => setActiveImageIdx((activeImageIdx + 1) % galleryImages.length)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full transition-all" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)' }}
-                >
-                  <ChevronRight className="w-5 h-5 text-white" />
-                </button>
+                {galleryImages.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setActiveImageIdx((activeImageIdx - 1 + galleryImages.length) % galleryImages.length); }}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full transition-all" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)' }}
+                    >
+                      <ChevronLeft className="w-5 h-5 text-white" />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setActiveImageIdx((activeImageIdx + 1) % galleryImages.length); }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full transition-all" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)' }}
+                    >
+                      <ChevronRight className="w-5 h-5 text-white" />
+                    </button>
+                  </>
+                )}
 
                 {/* Image Counter */}
                 <div className="absolute top-4 left-4 z-10">
@@ -202,9 +228,11 @@ export default function UrunDetay() {
             {/* Rating */}
             <div className="flex items-center gap-3 mb-4">
               <div className="flex gap-0.5">
-                {[1,2,3,4,5].map((i) => <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
+                {[1,2,3,4,5].map((i) => (
+                  <Star key={i} className={`w-4 h-4 ${i <= starCount ? 'fill-amber-400 text-amber-400' : 'fill-none text-[var(--text-muted)]'}`} />
+                ))}
               </div>
-              <span className="text-sm text-[var(--text-muted)]">4.9 (128 değerlendirme)</span>
+              <span className="text-sm text-[var(--text-muted)]">{rating.toFixed(1)} ({reviewCount} değerlendirme)</span>
             </div>
 
             <p className="text-base text-[var(--text-secondary)] leading-relaxed mb-6">
@@ -376,6 +404,37 @@ export default function UrunDetay() {
           </div>
         )}
       </div>
+
+      {/* Zoom Modal */}
+      {zoomOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.92)' }}
+          onClick={() => setZoomOpen(false)}
+        >
+          <button
+            onClick={() => setZoomOpen(false)}
+            className="absolute top-4 right-4 z-10 p-3 rounded-full transition-colors"
+            style={{ background: 'rgba(255,255,255,0.1)' }}
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+          <div className="relative w-[90vw] h-[90vh] max-w-4xl" onClick={(e) => e.stopPropagation()}>
+            <Image
+              src={galleryImages[activeImageIdx].src}
+              alt={door.name}
+              fill
+              className="object-contain"
+              sizes="90vw"
+              quality={95}
+            />
+          </div>
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center">
+            <p className="text-sm text-white/70 font-medium">{door.name}</p>
+            <p className="text-xs text-white/40 mt-1">Kapatmak için tıklayın veya X&apos;e basın</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import Navbar from "@/components/Navbar";
@@ -125,26 +126,7 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <head>
-        {/* Google Tag Manager — GTM-XXXXXXX buraya yaz */}
-        {/* <script dangerouslySetInnerHTML={{ __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-XXXXXXX');` }} /> */}
-
-        {/* Google Analytics 4 */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-YYJ8P3NDF0" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-YYJ8P3NDF0', { page_path: window.location.pathname });
-            `,
-          }}
-        />
-
-        {/* Google Search Console — Doğrulama kodu admin'den ayarlanır */}
-        {/* <meta name="google-site-verification" content="BURAYA_KODUNUZU_YAZIN" /> */}
-
-        {/* Theme: Flash önlemek için synchronous */}
+        {/* Theme: Flash önlemek için synchronous — bu render-blocking olmalı */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();`,
@@ -163,6 +145,12 @@ export default function RootLayout({
           <MobileBottomNav />
           <ServiceWorkerRegister />
         </ThemeProvider>
+
+        {/* Google Analytics 4 — loaded after page is interactive */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-YYJ8P3NDF0" strategy="afterInteractive" />
+        <Script id="ga-config" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-YYJ8P3NDF0',{page_path:window.location.pathname});`}
+        </Script>
       </body>
     </html>
   );

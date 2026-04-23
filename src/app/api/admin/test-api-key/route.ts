@@ -10,26 +10,47 @@ export async function POST(req: NextRequest) {
 
   try {
     await initDB();
-    const result = await sql`SELECT value FROM settings WHERE key = 'replicateApiKey'`;
-    const rawValue = result.rows?.[0]?.value;
 
-    if (!rawValue) {
-      return NextResponse.json({
-        valid: false,
-        error: "API anahtarı veritabanında bulunamadı",
-      });
-    }
+    let apiKey: string | null = null;
+    let source = "db";
 
-    // Clean the key the same way generate-image does
-    let apiKey: string;
+    // Check if a key was sent in the body (direct set mode)
     try {
-      apiKey = JSON.parse(rawValue);
+      const body = await req.json();
+      if (body.apiKey && typeof body.apiKey === "string" && !body.apiKey.includes("...")) {
+        apiKey = body.apiKey.trim();
+        source = "body";
+        // Save directly to DB
+        await sql`
+          INSERT INTO settings (key, value) VALUES ('replicateApiKey', ${apiKey})
+          ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, "updatedAt" = NOW()
+        `;
+      }
     } catch {
-      apiKey = rawValue;
+      // No body or invalid JSON — read from DB
     }
-    apiKey = String(apiKey).trim().replace(/^["']+|["']+$/g, "");
 
-    // Test with a simple Replicate API call (list models - lightweight)
+    // If no key from body, read from DB
+    if (!apiKey) {
+      const result = await sql`SELECT value FROM settings WHERE key = 'replicateApiKey'`;
+      const rawValue = result.rows?.[0]?.value;
+
+      if (!rawValue) {
+        return NextResponse.json({
+          valid: false,
+          error: "API anahtarı veritabanında bulunamadı",
+        });
+      }
+
+      try {
+        apiKey = JSON.parse(rawValue);
+      } catch {
+        apiKey = rawValue;
+      }
+      apiKey = String(apiKey).trim().replace(/^["']+|["']+$/g, "");
+    }
+
+    // Test with Replicate API
     const res = await fetch("https://api.replicate.com/v1/account", {
       headers: { "Authorization": `Bearer ${apiKey}` },
     });
@@ -40,18 +61,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         valid: true,
         username: data.username,
-        keyPreview: apiKey.slice(0, 6) + "..." + apiKey.slice(-4),
-        keyLength: apiKey.length,
+        keyPreview: apiKey!.slice(0, 6) + "..." + apiKey!.slice(-4),
+        keyLength: apiKey!.length,
+        source,
       });
     }
 
     return NextResponse.json({
       valid: false,
       error: data.detail || "Geçersiz anahtar",
-      keyPreview: apiKey.slice(0, 6) + "..." + apiKey.slice(-4),
-      keyLength: apiKey.length,
-      rawValuePreview: rawValue.slice(0, 8) + "...",
-      rawValueLength: rawValue.length,
+      keyPreview: apiKey!.slice(0, 6) + "..." + apiKey!.slice(-4),
+      keyLength: apiKey!.length,
+      source,
     });
   } catch (error) {
     return NextResponse.json({

@@ -55,16 +55,16 @@ export default function YapayZekaPage() {
     setTesting(true);
     setTestResult(null);
     try {
-      // If user typed a new key, save it first
+      // Send key directly in body — endpoint saves it to DB and tests it
+      const payload: Record<string, string> = {};
       if (apiKey && !apiKey.includes("...")) {
-        await fetch("/api/admin/settings", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ replicateApiKey: apiKey }),
-        });
+        payload.apiKey = apiKey;
       }
-      // Test the saved key via server-side endpoint
-      const res = await fetch("/api/admin/test-api-key", { method: "POST" });
+      const res = await fetch("/api/admin/test-api-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
       const data = await res.json();
       if (data.valid) {
         setTestResult({ ok: true, msg: `API anahtari gecerli! Hesap: ${data.username || "OK"} (${data.keyPreview})` });

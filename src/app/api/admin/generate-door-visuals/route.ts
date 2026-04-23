@@ -28,7 +28,11 @@ export async function POST(req: NextRequest) {
     }
 
     const settings = await getSettings();
-    const apiKey = settings.replicateApiKey;
+    // Trim and strip any extra quotes from the API key
+    let apiKey = settings.replicateApiKey;
+    if (apiKey) {
+      apiKey = String(apiKey).trim().replace(/^["']+|["']+$/g, "");
+    }
 
     if (!apiKey) {
       return NextResponse.json(
@@ -36,6 +40,8 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    console.log(`[generate-door-visuals] API key length: ${apiKey.length}, starts: ${apiKey.slice(0, 5)}...`);
 
     const { doorName, doorColor, doorSeries } = await req.json();
 

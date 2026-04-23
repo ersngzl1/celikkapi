@@ -55,19 +55,25 @@ export default function YapayZekaPage() {
     setTesting(true);
     setTestResult(null);
     try {
-      const keyToTest = apiKey.includes("...") ? "saved" : apiKey;
-      const res = await fetch("https://api.replicate.com/v1/models/openai/gpt-image-1", {
-        headers: { "Authorization": `Bearer ${keyToTest === "saved" ? "" : apiKey}` },
-      });
-      if (res.ok || res.status === 200) {
-        setTestResult({ ok: true, msg: "Baglanti basarili! API anahtari gecerli." });
-      } else if (res.status === 401) {
-        setTestResult({ ok: false, msg: "API anahtari gecersiz. Lutfen kontrol edin." });
+      // If user typed a new key, save it first
+      if (apiKey && !apiKey.includes("...")) {
+        await fetch("/api/admin/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ replicateApiKey: apiKey }),
+        });
+      }
+      // Test the saved key via server-side endpoint
+      const res = await fetch("/api/admin/test-api-key", { method: "POST" });
+      const data = await res.json();
+      if (data.valid) {
+        setTestResult({ ok: true, msg: `API anahtari gecerli! Hesap: ${data.username || "OK"} (${data.keyPreview})` });
+        setHasApiKey(true);
       } else {
-        setTestResult({ ok: true, msg: "API anahtari kaydedildi. Gorsel uretimde test edilecek." });
+        setTestResult({ ok: false, msg: `API anahtari gecersiz: ${data.error}${data.keyPreview ? ` (${data.keyPreview}, ${data.keyLength} karakter)` : ""}` });
       }
     } catch {
-      setTestResult({ ok: true, msg: "API anahtari kaydedildi. Gorsel uretimde test edilecek." });
+      setTestResult({ ok: false, msg: "Test sirasinda bir hata olustu." });
     } finally {
       setTesting(false);
     }

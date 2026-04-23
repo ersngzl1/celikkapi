@@ -120,6 +120,10 @@ export async function POST(req: NextRequest) {
     if (sanitized.replicateApiKey && String(sanitized.replicateApiKey).includes("...")) {
       sanitized.replicateApiKey = current.replicateApiKey;
     }
+    // Clean API key: trim whitespace and strip wrapping quotes
+    if (sanitized.replicateApiKey && !String(sanitized.replicateApiKey).includes("...")) {
+      sanitized.replicateApiKey = String(sanitized.replicateApiKey).trim().replace(/^["']+|["']+$/g, "");
+    }
 
     const updated = { ...current, ...sanitized };
     await saveSettings(updated);

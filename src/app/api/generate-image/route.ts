@@ -89,7 +89,11 @@ export async function POST(req: NextRequest) {
   const { doorImage, userImage, doorName } = body;
 
   const settings = await getSettings();
-  const apiKey = settings.replicateApiKey;
+  // Trim and strip any extra quotes from the API key
+  let apiKey = settings.replicateApiKey;
+  if (apiKey) {
+    apiKey = String(apiKey).trim().replace(/^["']+|["']+$/g, "");
+  }
 
   if (!apiKey) {
     return NextResponse.json(
@@ -97,6 +101,8 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+
+  console.log(`[generate-image] API key length: ${apiKey.length}, starts: ${apiKey.slice(0, 5)}..., ends: ...${apiKey.slice(-4)}`);
 
   if (!userImage || typeof userImage !== "string") {
     return NextResponse.json({ error: "Kullanici gorseli eksik" }, { status: 400 });

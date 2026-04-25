@@ -350,7 +350,7 @@ function KatalogContent() {
                         fill
                         className="object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-lg"
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        style={{ padding: '8%' }}
+                        style={{ padding: '0' }}
                       />
                       {/* Category badge */}
                       <span className="absolute top-2.5 left-2.5 text-[9px] md:text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#1a1a1a' }}>{door.category}</span>
@@ -386,7 +386,7 @@ function KatalogContent() {
                 <div key={door.id} className="animate-on-scroll group">
                   <div className="flex flex-col sm:flex-row items-stretch gap-0 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-black/10" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
                     <Link href={`/urun/${door.slug || door.id}`} className="w-full sm:w-52 h-56 sm:h-auto flex-shrink-0 relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #f0ede8 0%, #e8e4dd 50%, #ddd8d0 100%)' }}>
-                      <Image src={door.image} alt={door.name} fill className="object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-md" sizes="208px" style={{ padding: '8%' }} />
+                      <Image src={door.image} alt={door.name} fill className="object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-md" sizes="208px" style={{ padding: '0' }} />
                       <div className="absolute top-3 left-3">
                         <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#1a1a1a' }}>{door.category}</span>
                       </div>

@@ -65,13 +65,13 @@ export default function Footer() {
                         width: '36px',
                         height: '36px',
                         borderRadius: '10px',
-                        background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))',
-                        boxShadow: '0 2px 8px var(--gold-badge-border)',
+                        background: '#0D1B4C',
+                        boxShadow: '0 2px 8px rgba(13,27,76,0.2)',
                       }}
                     >
-                      <Shield className="w-4 h-4 text-[var(--bg-primary)]" strokeWidth={2.5} />
+                      <Shield className="w-4 h-4 text-white" strokeWidth={2.5} />
                     </div>
-                    <span className="text-gold font-serif text-lg font-extrabold">Best Kapı</span>
+                    <span className="font-serif text-lg font-extrabold" style={{ color: 'var(--text-primary)' }}><span style={{ color: '#C8102E' }}>Best</span> Kapı</span>
                   </>
                 )}
               </Link>

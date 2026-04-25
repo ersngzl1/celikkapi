@@ -9,7 +9,7 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 export const viewport: Viewport = {
-  themeColor: "#FAFAF8",
+  themeColor: "#FFFFFF",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -129,7 +129,7 @@ export default function RootLayout({
         {/* Theme: Flash önlemek için synchronous — bu render-blocking olmalı */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();`,
+            __html: `(function(){var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);})();`,
           }}
         />
 

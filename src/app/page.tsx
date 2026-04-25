@@ -105,53 +105,50 @@ export default function HomePage() {
       {/* ─── HERO ─── */}
       <section className="relative min-h-[92vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute inset-0" style={{ background: 'var(--bg-primary)' }} />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(200,165,92,0.12)_0%,transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(200,165,92,0.08)_0%,transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(212,184,122,0.06)_0%,transparent_70%)]" />
-          <div className="absolute inset-0 opacity-[0.03]" style={{
-            backgroundImage: "linear-gradient(rgba(200,165,92,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(200,165,92,0.12) 1px, transparent 1px)",
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #0D1B4C 0%, #132457 40%, #0D1B4C 100%)' }} />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(200,16,46,0.12)_0%,transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.04)_0%,transparent_50%)]" />
+          <div className="absolute inset-0 opacity-[0.04]" style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)",
             backgroundSize: "80px 80px",
           }} />
-          <div className="absolute top-20 right-[15%] w-[500px] h-[500px] rounded-full animate-float" style={{ background: 'var(--gold-glow)', filter: 'blur(100px)', opacity: 0.6 }} />
-          <div className="absolute bottom-10 left-[10%] w-[400px] h-[400px] rounded-full animate-float" style={{ background: 'var(--gold-glow)', filter: 'blur(80px)', animationDelay: '1.5s', opacity: 0.5 }} />
-          <div className="absolute top-[60%] right-[20%] w-[300px] h-[300px] rounded-full animate-float" style={{ background: 'var(--gold-glow)', filter: 'blur(70px)', animationDelay: '2s', opacity: 0.3 }} />
+          <div className="absolute top-20 right-[15%] w-[400px] h-[400px] rounded-full animate-float" style={{ background: 'rgba(200,16,46,0.08)', filter: 'blur(100px)' }} />
+          <div className="absolute bottom-10 left-[10%] w-[300px] h-[300px] rounded-full animate-float" style={{ background: 'rgba(255,255,255,0.03)', filter: 'blur(80px)', animationDelay: '1.5s' }} />
         </div>
 
         <div className="container-custom relative z-10" style={{ paddingTop: '80px', paddingBottom: '40px' }}>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-12 items-center">
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-3 mb-6 animate-fade-up">
-                <span className="badge-gold"><Award className="w-3 h-3" />Best Pen Güvencesi</span>
-                <span className="badge-gold"><Users className="w-3 h-3" />Adana&apos;nın Tercihi</span>
-                <span className="badge-gold"><Shield className="w-3 h-3" />TSE Belgeli</span>
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.9)' }}><Award className="w-3 h-3" />Best Pen Güvencesi</span>
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.9)' }}><Shield className="w-3 h-3" />TSE Belgeli</span>
               </div>
 
               <h1 className="font-serif text-[3.2rem] sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold leading-[0.92] mb-5 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-                <span className="text-[var(--text-primary)]">{hero.titleLine1 || "Adana'da"}</span><br />
-                <span className="text-gold">{hero.titleLine2 || "Çelik Kapı"}</span>
+                <span className="text-white">{hero.titleLine1 || "Adana'da"}</span><br />
+                <span style={{ color: '#C8102E' }}>{hero.titleLine2 || "Çelik Kapı"}</span>
               </h1>
 
-              <p className="text-lg md:text-xl text-[var(--text-secondary)] max-w-xl leading-relaxed mb-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
+              <p className="text-lg md:text-xl max-w-xl leading-relaxed mb-8 animate-fade-up" style={{ animationDelay: "0.2s", color: 'rgba(255,255,255,0.7)' }}>
                 {hero.subtitle || "Best Kapı ile evinizin güvenliğini ve estetiğini bir üst seviyeye taşıyın. Adana ve çevre illerde kaliteli çelik kapı çözümleri."}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 mb-8 animate-fade-up" style={{ animationDelay: "0.3s" }}>
+                <Link href="/katalog" className="group inline-flex items-center justify-center gap-2 px-7 py-4 font-bold rounded-xl transition-all duration-300 text-[15px]" style={{ background: '#C8102E', color: '#FFFFFF', boxShadow: '0 4px 20px rgba(200,16,46,0.3)' }}>
+                  Kataloğu İncele <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Link>
                 <a href={waLink} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-2 px-7 py-4 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20BD5A] transition-all duration-300 wa-glow text-[15px]">
                   <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                  WhatsApp ile Yazın <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  WhatsApp ile Yazın
                 </a>
-                <Link href="/katalog" className="group inline-flex items-center justify-center gap-2 px-7 py-4 font-bold rounded-xl transition-all duration-300 cta-gold text-[15px]" style={{ background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)', color: 'var(--bg-primary)' }}>
-                  Kataloğu İncele
-                </Link>
-                <a href={`tel:${settings.phone.replace(/[^0-9+]/g, "")}`} className="inline-flex items-center justify-center gap-2 px-7 py-4 text-[var(--text-primary)] font-bold rounded-xl transition-all duration-300 text-[15px]" style={{ border: '1px solid var(--border-light)' }}>
-                  <Phone className="w-4 h-4 text-[var(--gold)]" /> Hemen Ara
+                <a href={`tel:${settings.phone.replace(/[^0-9+]/g, "")}`} className="inline-flex items-center justify-center gap-2 px-7 py-4 text-white font-bold rounded-xl transition-all duration-300 text-[15px]" style={{ border: '1px solid rgba(255,255,255,0.2)' }}>
+                  <Phone className="w-4 h-4" /> Hemen Ara
                 </a>
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--text-muted)] animate-fade-up" style={{ animationDelay: "0.4s" }}>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm animate-fade-up" style={{ animationDelay: "0.4s", color: 'rgba(255,255,255,0.5)' }}>
                 {["Profesyonel montaj", "20 yıla kadar garanti", "Adana ve çevre iller"].map((t) => (
-                  <span key={t} className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-[var(--gold)]" />{t}</span>
+                  <span key={t} className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" style={{ color: '#C8102E' }} />{t}</span>
                 ))}
               </div>
             </div>
@@ -162,13 +159,13 @@ export default function HomePage() {
                   const s = stats[idx] || { value: "", label: "" };
                   return { icon: Icon, ...s };
                 }).map((stat, idx) => (
-                  <div key={stat.label} className="card-gold flex items-center gap-4 group animate-slide-up" style={{ padding: '16px', animationDelay: `${0.3 + idx * 0.12}s`, opacity: 0 }}>
-                    <div className="flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-all duration-300" style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--gold-badge-bg)', border: '1px solid var(--stat-border)' }}>
-                      <stat.icon className="w-5 h-5 text-[var(--gold)]" />
+                  <div key={stat.label} className="flex items-center gap-4 group animate-slide-up rounded-2xl" style={{ padding: '16px', animationDelay: `${0.3 + idx * 0.12}s`, opacity: 0, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}>
+                    <div className="flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-all duration-300" style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.25)' }}>
+                      <stat.icon className="w-5 h-5" style={{ color: '#E0243F' }} />
                     </div>
                     <div>
-                      <div className="text-gold font-serif text-xl font-extrabold">{stat.value}</div>
-                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{stat.label}</div>
+                      <div className="font-serif text-xl font-extrabold text-white">{stat.value}</div>
+                      <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>{stat.label}</div>
                     </div>
                   </div>
                 ))}
@@ -441,13 +438,13 @@ export default function HomePage() {
       </section>
 
       {/* ─── TRUST MARQUEE ─── */}
-      <section className="overflow-hidden" style={{ padding: '16px 0', background: 'linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-dark))' }}>
+      <section className="overflow-hidden" style={{ padding: '16px 0', background: 'linear-gradient(135deg, #0D1B4C, #132457, #0D1B4C)' }}>
         <div className="flex animate-marquee whitespace-nowrap">
           {[0,1].map((setIdx) => (
             <div key={setIdx} className="flex items-center gap-8 mr-8">
               {trustItems.map((text: string) => (
-                <span key={`${setIdx}-${text}`} className="flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--bg-primary)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--text-muted)' }} />{text}
+                <span key={`${setIdx}-${text}`} className="flex items-center gap-2 text-sm font-medium text-white">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/40" />{text}
                 </span>
               ))}
             </div>

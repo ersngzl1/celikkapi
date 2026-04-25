@@ -146,7 +146,7 @@ function KatalogContent() {
                 <Link
                   href="/ai-deneme"
                   className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] cta-gold"
-                  style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}
+                  style={{ background: '#C8102E', color: '#FFFFFF' }}
                 >
                   <Sparkles className="w-4 h-4" />
                   AI ile Dene
@@ -333,7 +333,7 @@ function KatalogContent() {
               </div>
               <p className="text-lg font-semibold text-[var(--text-primary)]">Sonuç bulunamadı</p>
               <p className="text-sm text-[var(--text-muted)] mt-1">Farklı filtreler deneyebilirsiniz.</p>
-              <button onClick={clearFilters} className="mt-4 px-6 py-2.5 text-sm font-bold rounded-xl transition-colors cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
+              <button onClick={clearFilters} className="mt-4 px-6 py-2.5 text-sm font-bold rounded-xl transition-colors cta-gold" style={{ background: '#C8102E', color: '#FFFFFF' }}>
                 Filtreleri Temizle
               </button>
             </div>
@@ -343,7 +343,7 @@ function KatalogContent() {
                 <div key={door.id} className="animate-on-scroll group">
                   <div className="rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-black/10" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
                     {/* Image Area — full door visible */}
-                    <Link href={`/urun/${door.slug || door.id}`} className="block relative overflow-hidden" style={{ aspectRatio: '3/4', background: 'linear-gradient(145deg, #f0ede8 0%, #e8e4dd 50%, #ddd8d0 100%)' }}>
+                    <Link href={`/urun/${door.slug || door.id}`} className="block relative overflow-hidden" style={{ aspectRatio: '3/4', background: 'linear-gradient(145deg, #F4F5F7 0%, #ECEDF0 50%, #E4E5EA 100%)' }}>
                       <Image
                         src={door.image}
                         alt={door.name}
@@ -353,7 +353,7 @@ function KatalogContent() {
                         style={{ padding: '0' }}
                       />
                       {/* Category badge */}
-                      <span className="absolute top-2.5 left-2.5 text-[9px] md:text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#1a1a1a' }}>{door.category}</span>
+                      <span className="absolute top-2.5 left-2.5 text-[9px] md:text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#FFFFFF' }}>{door.category}</span>
                     </Link>
 
                     {/* Info Area */}
@@ -368,7 +368,7 @@ function KatalogContent() {
                       <p className="text-[10px] md:text-[11px] text-[var(--text-muted)] mt-0.5">{door.series}</p>
 
                       <div className="flex gap-1.5 mt-3">
-                        <Link href={`/urun/${door.slug || door.id}`} className="flex-1 flex items-center justify-center gap-1 py-2 md:py-2.5 text-[10px] md:text-xs font-bold rounded-lg transition-all hover:opacity-90" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#1a1a1a' }}>
+                        <Link href={`/urun/${door.slug || door.id}`} className="flex-1 flex items-center justify-center gap-1 py-2 md:py-2.5 text-[10px] md:text-xs font-bold rounded-lg transition-all hover:opacity-90" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}>
                           <Eye className="w-3 h-3 md:w-3.5 md:h-3.5" /> İncele
                         </Link>
                         <Link href={`/ai-deneme?door=${door.id}`} className="flex items-center justify-center gap-1 px-3 py-2 md:py-2.5 text-[10px] md:text-xs font-bold rounded-lg transition-all hover:opacity-90" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
@@ -385,10 +385,10 @@ function KatalogContent() {
               {filtered.map((door) => (
                 <div key={door.id} className="animate-on-scroll group">
                   <div className="flex flex-col sm:flex-row items-stretch gap-0 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-black/10" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                    <Link href={`/urun/${door.slug || door.id}`} className="w-full sm:w-52 h-56 sm:h-auto flex-shrink-0 relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #f0ede8 0%, #e8e4dd 50%, #ddd8d0 100%)' }}>
+                    <Link href={`/urun/${door.slug || door.id}`} className="w-full sm:w-52 h-56 sm:h-auto flex-shrink-0 relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #F4F5F7 0%, #ECEDF0 50%, #E4E5EA 100%)' }}>
                       <Image src={door.image} alt={door.name} fill className="object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-md" sizes="208px" style={{ padding: '0' }} />
                       <div className="absolute top-3 left-3">
-                        <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#1a1a1a' }}>{door.category}</span>
+                        <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#FFFFFF' }}>{door.category}</span>
                       </div>
                     </Link>
                     <div className="flex-1 flex flex-col justify-between p-5">
@@ -406,7 +406,7 @@ function KatalogContent() {
                         <p className="text-sm text-[var(--text-secondary)] mt-2 line-clamp-2 leading-relaxed">{door.description}</p>
                       </div>
                       <div className="flex items-center gap-3 mt-4">
-                        <Link href={`/urun/${door.slug || door.id}`} className="flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold rounded-xl transition-all hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#1a1a1a' }}>
+                        <Link href={`/urun/${door.slug || door.id}`} className="flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold rounded-xl transition-all hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}>
                           <Eye className="w-3.5 h-3.5" /> Detay Gör
                         </Link>
                         <Link href={`/ai-deneme?door=${door.id}`} className="flex items-center gap-1.5 px-5 py-2.5 text-[var(--text-primary)] text-xs font-bold rounded-xl transition-all" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>

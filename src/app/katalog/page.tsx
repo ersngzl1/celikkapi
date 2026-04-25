@@ -341,34 +341,42 @@ function KatalogContent() {
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-5 stagger-children">
               {filtered.map((door) => (
                 <div key={door.id} className="animate-on-scroll group">
-                  <Link href={`/urun/${door.slug || door.id}`} className="block relative rounded-2xl overflow-hidden h-[320px] sm:h-[380px] md:h-[440px] card-hover-glow" style={{ border: '1px solid var(--border)' }}>
-                    <Image src={door.image} alt={door.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" />
+                  <div className="rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-black/10" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+                    {/* Image Area — full door visible */}
+                    <Link href={`/urun/${door.slug || door.id}`} className="block relative overflow-hidden" style={{ aspectRatio: '3/4', background: 'linear-gradient(145deg, #f0ede8 0%, #e8e4dd 50%, #ddd8d0 100%)' }}>
+                      <Image
+                        src={door.image}
+                        alt={door.name}
+                        fill
+                        className="object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-lg"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        style={{ padding: '8%' }}
+                      />
+                      {/* Category badge */}
+                      <span className="absolute top-2.5 left-2.5 text-[9px] md:text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#1a1a1a' }}>{door.category}</span>
+                    </Link>
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/5 group-hover:from-black/95 transition-colors duration-500" />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer" />
-
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
-                      <span className="text-[9px] md:text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-lg" style={{ background: 'var(--gold)', color: 'var(--bg-primary)' }}>{door.category}</span>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-full" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)', border: '1px solid var(--border)' }}>
-                        <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full" style={{ backgroundColor: door.colorHex, border: '1px solid var(--border-light)' }} />
-                        <span className="text-[9px] md:text-[10px] font-medium" style={{ color: 'var(--text-secondary)' }}>{door.color}</span>
+                    {/* Info Area */}
+                    <div className="p-3 md:p-4">
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: door.colorHex, border: '1px solid var(--border-light)', boxShadow: `0 0 0 1px ${door.colorHex}33` }} />
+                        <span className="text-[10px] md:text-[11px] text-[var(--text-muted)] font-medium truncate">{door.color}</span>
                       </div>
-                    </div>
+                      <Link href={`/urun/${door.slug || door.id}`}>
+                        <h3 className="font-serif text-sm md:text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--gold)] transition-colors leading-tight truncate">{door.name}</h3>
+                      </Link>
+                      <p className="text-[10px] md:text-[11px] text-[var(--text-muted)] mt-0.5">{door.series}</p>
 
-                    <div className="absolute bottom-0 left-0 right-0 p-3 md:p-5 z-10">
-                      <p className="text-[9px] md:text-[11px] text-[var(--gold-light)] font-semibold uppercase tracking-widest">{door.series}</p>
-                      <h3 className="font-serif text-sm md:text-xl font-bold text-white" style={{ marginTop: '6px', marginBottom: '10px' }}>{door.name}</h3>
-
-                      <div className="flex gap-1.5 md:gap-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                        <Link href={`/ai-deneme?door=${door.id}`} className="flex-1 flex items-center justify-center gap-1 py-2.5 md:py-3 text-[10px] md:text-xs font-bold rounded-xl transition-all cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
-                          <Sparkles className="w-3 h-3 md:w-3.5 md:h-3.5" /> AI Dene
+                      <div className="flex gap-1.5 mt-3">
+                        <Link href={`/urun/${door.slug || door.id}`} className="flex-1 flex items-center justify-center gap-1 py-2 md:py-2.5 text-[10px] md:text-xs font-bold rounded-lg transition-all hover:opacity-90" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#1a1a1a' }}>
+                          <Eye className="w-3 h-3 md:w-3.5 md:h-3.5" /> İncele
                         </Link>
-                        <button className="flex-1 flex items-center justify-center gap-1 py-2.5 md:py-3 text-[10px] md:text-xs font-bold rounded-xl transition-all" style={{ background: 'var(--bg-elevated)', backdropFilter: 'blur(8px)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
-                          <Eye className="w-3 h-3 md:w-3.5 md:h-3.5" /> Detay
-                        </button>
+                        <Link href={`/ai-deneme?door=${door.id}`} className="flex items-center justify-center gap-1 px-3 py-2 md:py-2.5 text-[10px] md:text-xs font-bold rounded-lg transition-all hover:opacity-90" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
+                          <Sparkles className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                        </Link>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 </div>
               ))}
             </div>
@@ -376,11 +384,11 @@ function KatalogContent() {
             <div className="flex flex-col gap-4 stagger-children">
               {filtered.map((door) => (
                 <div key={door.id} className="animate-on-scroll group">
-                  <div className="flex flex-col sm:flex-row items-stretch gap-0 rounded-2xl overflow-hidden transition-all duration-400" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-                    <Link href={`/urun/${door.slug || door.id}`} className="w-full sm:w-48 h-48 sm:h-auto flex-shrink-0 relative overflow-hidden">
-                      <Image src={door.image} alt={door.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="192px" />
+                  <div className="flex flex-col sm:flex-row items-stretch gap-0 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-black/10" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+                    <Link href={`/urun/${door.slug || door.id}`} className="w-full sm:w-52 h-56 sm:h-auto flex-shrink-0 relative overflow-hidden" style={{ background: 'linear-gradient(145deg, #f0ede8 0%, #e8e4dd 50%, #ddd8d0 100%)' }}>
+                      <Image src={door.image} alt={door.name} fill className="object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-md" sizes="208px" style={{ padding: '8%' }} />
                       <div className="absolute top-3 left-3">
-                        <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: 'var(--bg-primary)' }}>{door.category}</span>
+                        <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#1a1a1a' }}>{door.category}</span>
                       </div>
                     </Link>
                     <div className="flex-1 flex flex-col justify-between p-5">
@@ -393,16 +401,16 @@ function KatalogContent() {
                           </div>
                         </div>
                         <Link href={`/urun/${door.slug || door.id}`}>
-                          <h3 className="font-serif text-xl font-bold text-[var(--text-primary)] group-hover:text-[var(--gold-light)] transition-colors">{door.name}</h3>
+                          <h3 className="font-serif text-xl font-bold text-[var(--text-primary)] group-hover:text-[var(--gold)] transition-colors">{door.name}</h3>
                         </Link>
                         <p className="text-sm text-[var(--text-secondary)] mt-2 line-clamp-2 leading-relaxed">{door.description}</p>
                       </div>
                       <div className="flex items-center gap-3 mt-4">
-                        <Link href={`/ai-deneme?door=${door.id}`} className="flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold rounded-xl transition-all hover:scale-[1.02] cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
-                          <Sparkles className="w-3.5 h-3.5" /> AI ile Dene
-                        </Link>
-                        <Link href={`/urun/${door.slug || door.id}`} className="flex items-center gap-1.5 px-5 py-2.5 text-[var(--text-primary)] text-xs font-bold rounded-xl transition-all" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
+                        <Link href={`/urun/${door.slug || door.id}`} className="flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold rounded-xl transition-all hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#1a1a1a' }}>
                           <Eye className="w-3.5 h-3.5" /> Detay Gör
+                        </Link>
+                        <Link href={`/ai-deneme?door=${door.id}`} className="flex items-center gap-1.5 px-5 py-2.5 text-[var(--text-primary)] text-xs font-bold rounded-xl transition-all" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
+                          <Sparkles className="w-3.5 h-3.5" /> AI ile Dene
                         </Link>
                       </div>
                     </div>

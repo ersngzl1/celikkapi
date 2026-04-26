@@ -337,107 +337,44 @@ export default function HomePage() {
       </section>
 
       {/* ─── AI KAPI GÖRÜNTÜLE ─── */}
-      <section className="relative overflow-hidden" style={{ padding: '80px 0' }}>
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #0D1B4C 0%, #162A5E 40%, #0D1B4C 100%)' }} />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(200,16,46,0.12)_0%,transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.04)_0%,transparent_50%)]" />
-
-        <div className="container-custom relative z-10">
-          {/* Section Header */}
-          <div className="text-center" style={{ marginBottom: '56px' }}>
-            <span className="animate-on-scroll inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider" style={{ background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.25)', color: '#E0243F' }}>
-              <Sparkles className="w-3.5 h-3.5" />
-              Yapay Zeka Destekli
+      <section style={{ padding: '64px 0 80px', background: 'var(--bg-primary)' }}>
+        <div className="container-custom">
+          <div className="text-center" style={{ marginBottom: '48px' }}>
+            <span className="animate-on-scroll badge-gold" style={{ marginBottom: '16px', display: 'inline-flex' }}>
+              <Sparkles className="w-3.5 h-3.5" /> AI ile Deneyin
             </span>
-            <h2 className="animate-on-scroll font-serif text-3xl md:text-5xl font-extrabold text-white leading-tight" style={{ marginTop: '20px' }}>
-              Kapınızı Almadan Önce<br /><span style={{ color: '#C8102E' }}>Evinizde Görün</span>
+            <h2 className="animate-on-scroll font-serif text-3xl md:text-5xl font-extrabold" style={{ marginTop: '16px' }}>
+              Kapınızı Evinizde <span className="text-gold">Görün</span>
             </h2>
-            <p className="animate-on-scroll text-base md:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed" style={{ marginTop: '16px' }}>
-              Telefonunuzla kapınızın fotoğrafını çekin, yapay zeka seçtiğiniz kapıyı evinize yerleştirsin.
+            <p className="animate-on-scroll text-[var(--text-secondary)] max-w-xl mx-auto" style={{ marginTop: '12px' }}>
+              Fotoğraf çekin, kapı seçin, yapay zeka evinize yerleştirsin. Ücretsiz ve kolay.
             </p>
           </div>
 
-          {/* 3 Step Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6" style={{ marginBottom: '48px' }}>
+          {/* 3 Steps */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 stagger-children" style={{ marginBottom: '40px' }}>
             {[
-              { num: "01", icon: Camera, title: "Fotoğraf Çekin", desc: "Telefonunuzla evinizin kapısının fotoğrafını çekin veya galeriden seçin.", color: '#C8102E' },
-              { num: "02", icon: MousePointerClick, title: "Kapı Seçin", desc: "Beğendiğiniz çelik kapı modelini katalogdan seçin.", color: '#E0243F' },
-              { num: "03", icon: ImageIcon, title: "Sonucu Görün", desc: "AI kapıyı evinize yerleştirsin. Beğenin, sipariş verin!", color: '#25D366' },
+              { icon: Camera, num: "1", title: "Fotoğraf Çekin", desc: "Evinizin kapısının fotoğrafını çekin veya galeriden seçin." },
+              { icon: MousePointerClick, num: "2", title: "Kapı Seçin", desc: "Beğendiğiniz çelik kapı modelini katalogdan seçin." },
+              { icon: Sparkles, num: "3", title: "Sonucu Görün", desc: "Yapay zeka kapıyı evinize yerleştirsin!" },
             ].map((step) => (
-              <div key={step.num} className="animate-on-scroll group relative" style={{ borderRadius: '20px', padding: '32px 28px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', transition: 'all 0.3s ease' }}>
-                <div className="absolute top-4 right-5 font-serif text-5xl font-extrabold" style={{ color: 'rgba(255,255,255,0.04)' }}>{step.num}</div>
-                <div className="flex items-center justify-center" style={{ width: '56px', height: '56px', borderRadius: '16px', background: `${step.color}20`, border: `1px solid ${step.color}30`, marginBottom: '20px' }}>
-                  <step.icon className="w-6 h-6" style={{ color: step.color }} />
+              <div key={step.num} className="animate-on-scroll card-gold text-center" style={{ padding: '28px 20px' }}>
+                <div className="flex items-center justify-center mx-auto" style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'var(--gold-badge-bg)', border: '1px solid var(--stat-border)', marginBottom: '16px' }}>
+                  <step.icon className="w-6 h-6 text-[var(--gold)]" />
                 </div>
-                <h3 className="font-serif text-lg font-bold text-white" style={{ marginBottom: '8px' }}>{step.title}</h3>
-                <p className="text-sm text-white/50 leading-relaxed">{step.desc}</p>
+                <div className="font-serif text-xs font-bold text-[var(--gold)]" style={{ marginBottom: '6px' }}>Adım {step.num}</div>
+                <h3 className="font-serif text-base font-bold text-[var(--text-primary)]" style={{ marginBottom: '6px' }}>{step.title}</h3>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed">{step.desc}</p>
               </div>
             ))}
           </div>
 
-          {/* Interactive Demo Preview */}
-          <div className="animate-on-scroll relative rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] items-stretch">
-              {/* Left: Visual */}
-              <div className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: '320px', background: 'linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))' }}>
-                {/* Decorative grid */}
-                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-
-                {/* Phone mockup */}
-                <div className="relative" style={{ width: '200px' }}>
-                  <div className="rounded-[28px] overflow-hidden" style={{ background: '#1a1a2e', border: '3px solid rgba(255,255,255,0.15)', padding: '8px', boxShadow: '0 25px 60px rgba(0,0,0,0.4)' }}>
-                    {/* Notch */}
-                    <div className="flex justify-center" style={{ marginBottom: '4px' }}>
-                      <div style={{ width: '60px', height: '6px', borderRadius: '3px', background: 'rgba(255,255,255,0.1)' }} />
-                    </div>
-                    {/* Screen */}
-                    <div className="rounded-[20px] overflow-hidden relative" style={{ aspectRatio: '9/16', background: 'linear-gradient(180deg, #F4F5F7 0%, #E8E9ED 100%)' }}>
-                      {/* Door placeholder */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div style={{ width: '45%', height: '70%', borderRadius: '4px 4px 0 0', background: 'linear-gradient(180deg, #8B6914 0%, #A07D2E 30%, #7A5C10 100%)', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
-                          {/* Door handle */}
-                          <div className="absolute" style={{ right: '15%', top: '52%', width: '6px', height: '16px', borderRadius: '3px', background: '#C0A030' }} />
-                        </div>
-                      </div>
-                      {/* AI overlay effect */}
-                      <div className="absolute inset-0 flex items-end justify-center" style={{ padding: '12px' }}>
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'rgba(200,16,46,0.9)', backdropFilter: 'blur(4px)' }}>
-                          <Sparkles className="w-3 h-3 text-white" />
-                          <span className="text-[10px] text-white font-bold">AI ile Oluşturuldu</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Glow effect */}
-                  <div className="absolute -inset-8 rounded-full blur-3xl" style={{ background: 'rgba(200,16,46,0.08)', zIndex: -1 }} />
-                </div>
-
-                {/* Floating elements */}
-                <div className="absolute top-8 left-8 animate-float flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}>
-                  <Camera className="w-4 h-4" style={{ color: '#C8102E' }} />
-                  <span className="text-xs text-white/80 font-medium">Fotoğraf</span>
-                </div>
-                <div className="absolute bottom-8 right-8 animate-float flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', animationDelay: '1s' }}>
-                  <CheckCircle2 className="w-4 h-4 text-[#25D366]" />
-                  <span className="text-xs text-white/80 font-medium">Sonuç</span>
-                </div>
-              </div>
-
-              {/* Right: CTA Panel */}
-              <div className="flex flex-col items-center justify-center text-center" style={{ padding: '48px 40px', background: 'rgba(200,16,46,0.06)', borderLeft: '1px solid rgba(255,255,255,0.06)', minWidth: '320px' }}>
-                <div className="flex items-center justify-center" style={{ width: '64px', height: '64px', borderRadius: '20px', background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.25)', marginBottom: '24px' }}>
-                  <Sparkles className="w-7 h-7" style={{ color: '#C8102E' }} />
-                </div>
-                <h3 className="font-serif text-xl font-extrabold text-white" style={{ marginBottom: '8px' }}>Ücretsiz Deneyin</h3>
-                <p className="text-sm text-white/50 leading-relaxed" style={{ marginBottom: '28px', maxWidth: '240px' }}>
-                  Yapay zeka ile kapınızı evinizde görün. Kayıt gerektirmez, tamamen ücretsiz.
-                </p>
-                <Link href="/ai-deneme" className="group inline-flex items-center gap-2 px-8 py-4 font-extrabold rounded-xl transition-all duration-300 text-[15px] cta-gold" style={{ background: '#C8102E', color: '#FFFFFF', width: '100%', justifyContent: 'center' }}>
-                  <Camera className="w-5 h-5" /> Hemen Dene <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-                <p className="text-[11px] text-white/30" style={{ marginTop: '12px' }}>30 saniyede sonuç</p>
-              </div>
-            </div>
+          {/* CTA */}
+          <div className="animate-on-scroll text-center">
+            <Link href="/ai-deneme" className="group inline-flex items-center gap-3 px-8 py-4 font-extrabold rounded-xl transition-all duration-300 text-[15px] cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}>
+              <Camera className="w-5 h-5" /> Hemen Deneyin - Ücretsiz <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+            <p className="text-xs text-[var(--text-muted)]" style={{ marginTop: '12px' }}>Kayıt gerektirmez, 30 saniyede sonuç</p>
           </div>
         </div>
       </section>

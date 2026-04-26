@@ -231,6 +231,15 @@ body {
   box-shadow: 0 6px 24px rgba(37, 211, 102, 0.35);
 }
 
+/* Typewriter blink cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 0.8s step-end infinite;
+}
+
 /* Scroll reveal */
 .animate-on-scroll {
   opacity: 0;

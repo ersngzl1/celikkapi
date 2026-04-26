@@ -90,26 +90,28 @@ async function main() {
     return;
   }
 
-  // Upload in batches of 2 (images are large)
-  const BATCH_SIZE = 2;
+  // Upload one by one (images are ~2MB each, Vercel limit ~4.5MB)
   let uploaded = 0;
 
-  for (let i = 0; i < items.length; i += BATCH_SIZE) {
-    const batch = items.slice(i, i + BATCH_SIZE);
-    const names = batch.map(b => b.productName).join(", ");
-    console.log(`📤 Uploading batch ${Math.floor(i / BATCH_SIZE) + 1}: ${names}`);
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    console.log(`📤 [${i + 1}/${items.length}] ${item.productName}`);
 
     try {
-      const result = await uploadBatch(batch, cookie);
-      console.log(`   ✅ ${JSON.stringify(result.summary)}`);
-      uploaded += result.summary.updated || 0;
+      const result = await uploadBatch([item], cookie);
+      if (result.summary.updated > 0) {
+        console.log(`   ✅ uploaded`);
+        uploaded++;
+      } else {
+        console.log(`   ⚠️ ${JSON.stringify(result.results[0])}`);
+      }
     } catch (err) {
-      console.error(`   ❌ Error: ${err.message}`);
+      console.error(`   ❌ ${err.message}`);
     }
 
-    // Small delay between batches
-    if (i + BATCH_SIZE < items.length) {
-      await new Promise(r => setTimeout(r, 1000));
+    // Small delay between uploads
+    if (i < items.length - 1) {
+      await new Promise(r => setTimeout(r, 500));
     }
   }
 

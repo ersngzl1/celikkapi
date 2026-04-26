@@ -230,7 +230,7 @@ export default function HakkimizdaPage() {
             Best Kapı olarak size en uygun çelik kapı çözümünü sunmak için hazırız. Hemen iletişime geçin.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3" style={{ maxWidth: '420px', margin: '0 auto' }}>
-            <Link href="/iletisim" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl transition-colors text-[15px] cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
+            <Link href="/iletisim" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl transition-colors text-[15px] cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}>
               İletişime Geçin <ArrowRight className="w-4 h-4" />
             </Link>
             <PhoneCTA className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-white font-bold rounded-xl transition-colors text-[15px]" style={{ border: '1px solid rgba(255,255,255,0.2)' }} />

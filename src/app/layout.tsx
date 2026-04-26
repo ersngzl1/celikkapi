@@ -68,8 +68,8 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/icon-192.png",
-    apple: "/icons/icon-192.png",
+    icon: "/uploads/favicon.png",
+    apple: "/uploads/favicon.png",
   },
   other: {
     "apple-mobile-web-app-capable": "yes",

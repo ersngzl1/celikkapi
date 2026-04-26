@@ -14,6 +14,7 @@ import {
   Download,
   RotateCcw,
   AlertTriangle,
+  Camera,
 } from "lucide-react";
 import { doors as fallbackDoors } from "@/data/doors";
 import Image from "next/image";
@@ -71,6 +72,7 @@ function AIDenemeContent() {
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) return;
@@ -246,7 +248,7 @@ function AIDenemeContent() {
                   { n: "3", text: "AI sonucu görün!" },
                 ].map((s) => (
                   <div key={s.n} className="flex items-center gap-2" style={{ padding: '8px 14px', borderRadius: '10px', background: 'var(--gold-badge-bg)', border: '1px solid var(--gold-badge-border)' }}>
-                    <span className="flex items-center justify-center font-bold text-xs" style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>{s.n}</span>
+                    <span className="flex items-center justify-center font-bold text-xs" style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}>{s.n}</span>
                     <span className="text-sm font-medium text-[var(--gold-light)]">{s.text}</span>
                   </div>
                 ))}
@@ -262,7 +264,7 @@ function AIDenemeContent() {
           <div className={showDoorPanel ? "order-2 xl:order-1" : ""}>
             {!uploadedImage ? (
               <div
-                className={`relative rounded-2xl overflow-hidden transition-all duration-300`}
+                className={`relative rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer`}
                 style={{
                   aspectRatio: '4/3',
                   border: isDragging ? '2px solid var(--gold)' : '2px dashed var(--border-light)',
@@ -271,6 +273,7 @@ function AIDenemeContent() {
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
+                onClick={() => fileInputRef.current?.click()}
               >
                 <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ padding: '32px' }}>
                   <div className="flex items-center justify-center" style={{
@@ -284,17 +287,28 @@ function AIDenemeContent() {
                     {isDragging ? "Bırakın..." : "Ev Giriş Fotoğrafınızı Yükleyin"}
                   </p>
                   <p className="text-sm text-[var(--text-muted)] text-center" style={{ marginBottom: '24px' }}>
-                    Sürükleyip bırakın veya dosya seçin
+                    Dokunarak galeriden seçin veya fotoğraf çekin
                   </p>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-2 text-sm font-bold rounded-xl transition-all cta-gold"
-                    style={{ padding: '12px 24px', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}
-                  >
-                    <ImageIcon className="w-4 h-4" />
-                    Fotoğraf Seç
-                  </button>
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                      className="flex items-center gap-2 text-sm font-bold rounded-xl transition-all cta-gold"
+                      style={{ padding: '12px 24px', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}
+                    >
+                      <ImageIcon className="w-4 h-4" />
+                      Galeriden Seç
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); cameraInputRef.current?.click(); }}
+                      className="flex items-center gap-2 text-sm font-bold rounded-xl transition-all"
+                      style={{ padding: '12px 24px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+                    >
+                      <Camera className="w-4 h-4" />
+                      Fotoğraf Çek
+                    </button>
+                  </div>
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileInput} className="hidden" />
+                  <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" onChange={handleFileInput} className="hidden" />
                   <p className="text-xs text-[var(--text-muted)]" style={{ marginTop: '16px' }}>JPG, PNG, WebP &bull; Maks. 10MB</p>
                 </div>
               </div>
@@ -304,7 +318,7 @@ function AIDenemeContent() {
                 <div className={`grid ${resultImage ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-4`}>
                   {/* Uploaded */}
                   <div className="relative rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
-                    <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-lg text-xs font-medium" style={{ background: 'var(--glass-bg)', color: 'white', backdropFilter: 'blur(8px)' }}>
+                    <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-lg text-xs font-medium" style={{ background: 'rgba(0,0,0,0.6)', color: 'white', backdropFilter: 'blur(8px)' }}>
                       Yüklenen Fotoğraf
                     </div>
                     <img src={uploadedImage} alt="Yüklenen fotoğraf" className="w-full object-cover" style={{ aspectRatio: '4/3' }} />
@@ -313,7 +327,7 @@ function AIDenemeContent() {
                   {/* Result */}
                   {resultImage && (
                     <div className="relative rounded-2xl overflow-hidden" style={{ border: '2px solid var(--gold)' }}>
-                      <div className="absolute top-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
+                      <div className="absolute top-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}>
                         <Sparkles className="w-3 h-3" /> AI Sonucu
                       </div>
                       <img src={resultImage} alt="AI sonucu" className="w-full object-cover" style={{ aspectRatio: '4/3' }} />
@@ -363,7 +377,7 @@ function AIDenemeContent() {
                     onClick={generateImage}
                     disabled={isProcessing}
                     className="flex-1 flex items-center justify-center gap-2 font-bold rounded-xl transition-all cta-gold disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ padding: '14px 24px', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)', fontSize: '15px' }}
+                    style={{ padding: '14px 24px', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF', fontSize: '15px' }}
                   >
                     {isProcessing ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Üretiliyor...</>
@@ -379,7 +393,15 @@ function AIDenemeContent() {
                     className="rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
                     style={{ padding: '14px 24px', border: '1px solid var(--border)', color: 'var(--text-primary)', background: 'var(--bg-card)' }}
                   >
-                    Farklı Fotoğraf
+                    <ImageIcon className="w-4 h-4 inline" style={{ marginRight: '4px' }} /> Galeriden
+                  </button>
+                  <button
+                    onClick={() => cameraInputRef.current?.click()}
+                    disabled={isProcessing}
+                    className="rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
+                    style={{ padding: '14px 24px', border: '1px solid var(--border)', color: 'var(--text-primary)', background: 'var(--bg-card)' }}
+                  >
+                    <Camera className="w-4 h-4 inline" style={{ marginRight: '4px' }} /> Çek
                   </button>
                   <button
                     onClick={resetAll}
@@ -390,6 +412,7 @@ function AIDenemeContent() {
                     <X className="w-4 h-4 inline" style={{ marginRight: '4px' }} /> Sıfırla
                   </button>
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileInput} className="hidden" />
+                  <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" onChange={handleFileInput} className="hidden" />
                 </div>
 
                 {/* Selected Door Info */}

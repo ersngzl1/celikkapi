@@ -9,7 +9,8 @@ import { useSettings } from "@/lib/useSettings";
 
 const navLinks = [
   { href: "/", label: "Ana Sayfa" },
-  { href: "/katalog", label: "Katalog" },
+  { href: "/celik-kapi", label: "Çelik Kapı" },
+  { href: "/oda-kapisi", label: "Oda Kapısı" },
   { href: "/ai-deneme", label: "Kapımı Görüntüle" },
   { href: "/hakkimizda", label: "Hakkımızda" },
   { href: "/iletisim", label: "İletişim" },

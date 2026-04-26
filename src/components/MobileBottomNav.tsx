@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Grid3X3, Sparkles, Info, Phone } from "lucide-react";
+import { Home, Shield, Sparkles, DoorOpen, Phone } from "lucide-react";
 
 const tabs = [
   { href: "/", label: "Ana Sayfa", icon: Home },
-  { href: "/katalog", label: "Katalog", icon: Grid3X3 },
+  { href: "/celik-kapi", label: "Çelik Kapı", icon: Shield },
   { href: "/ai-deneme", label: "AI Dene", icon: Sparkles, accent: true },
-  { href: "/hakkimizda", label: "Hakkımızda", icon: Info },
+  { href: "/oda-kapisi", label: "Oda Kapısı", icon: DoorOpen },
   { href: "/iletisim", label: "İletişim", icon: Phone },
 ];
 
@@ -45,7 +45,7 @@ export default function MobileBottomNav() {
                     boxShadow: '0 4px 15px var(--gold-badge-border)',
                   }}
                 >
-                  <Icon className="w-5 h-5 text-[var(--bg-primary)]" />
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
                 <span
                   style={{

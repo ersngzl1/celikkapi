@@ -245,7 +245,7 @@ export default function IletisimPage() {
                     style={{
                       padding: '14px 32px',
                       background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))',
-                      color: 'var(--bg-primary)',
+                      color: '#FFFFFF',
                       fontSize: '15px',
                     }}
                   >

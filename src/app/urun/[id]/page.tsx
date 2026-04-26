@@ -155,13 +155,13 @@ export default function UrunDetay() {
                   <>
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveImageIdx((activeImageIdx - 1 + galleryImages.length) % galleryImages.length); }}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full transition-all" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)' }}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full transition-all hover:scale-110" style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)' }}
                     >
                       <ChevronLeft className="w-5 h-5 text-white" />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveImageIdx((activeImageIdx + 1) % galleryImages.length); }}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full transition-all" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)' }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full transition-all hover:scale-110" style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)' }}
                     >
                       <ChevronRight className="w-5 h-5 text-white" />
                     </button>
@@ -170,7 +170,7 @@ export default function UrunDetay() {
 
                 {/* Image Counter */}
                 <div className="absolute top-4 left-4 z-10">
-                  <span className="text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-full font-bold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>{activeImageIdx + 1} / {galleryImages.length}</span>
+                  <span className="text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-full font-bold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}>{activeImageIdx + 1} / {galleryImages.length}</span>
                 </div>
 
                 <div className="absolute top-4 right-4 flex items-center gap-2 px-2.5 py-1.5 rounded-full z-10" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)', border: '1px solid var(--border)' }}>
@@ -197,7 +197,7 @@ export default function UrunDetay() {
               <Link
                 href={`/ai-deneme?door=${door.id}`}
                 className="flex items-center justify-center gap-2 w-full px-6 py-4 rounded-xl transition-all duration-300 text-sm font-bold shadow-lg cta-gold"
-                style={{ background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)', color: 'var(--bg-primary)' }}
+                style={{ background: 'linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)', color: '#FFFFFF' }}
               >
                 <Sparkles className="w-5 h-5" />
                 Bu Kapıyı Evinizde Deneyin
@@ -279,7 +279,7 @@ export default function UrunDetay() {
               <a
                 href={`tel:${settings.phone.replace(/[^0-9+]/g, "")}`}
                 className="flex items-center justify-center gap-2 px-6 py-4 font-bold rounded-xl transition-colors cta-gold"
-                style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}
+                style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}
               >
                 <Phone className="w-4 h-4" />
                 Hemen Ara

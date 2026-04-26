@@ -115,7 +115,7 @@ export default function BeforeAfter({
           style={{ left: '50%', transform: 'translateX(-50%)' }}
         >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full shadow-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', border: '2px solid rgba(255,255,255,0.4)' }}>
-            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" className="md:w-5 md:h-5" style={{ color: 'var(--bg-primary)' }}>
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" className="md:w-5 md:h-5" style={{ color: '#FFFFFF' }}>
               <path d="M6 10L3 7M3 7L6 4M3 7H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M14 10L17 7M17 7L14 4M17 7H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -124,7 +124,7 @@ export default function BeforeAfter({
 
         {/* Labels */}
         <div className="absolute top-1.5 left-1.5 md:top-3 md:left-3 z-10 pointer-events-none">
-          <span className="px-1.5 py-0.5 md:px-3 md:py-1.5 rounded-full text-[8px] md:text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm" style={{ background: 'rgba(200, 165, 92, 0.85)', color: 'var(--bg-primary)' }}>
+          <span className="px-1.5 py-0.5 md:px-3 md:py-1.5 rounded-full text-[8px] md:text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm" style={{ background: 'rgba(200, 165, 92, 0.85)', color: '#FFFFFF' }}>
             {beforeLabel}
           </span>
         </div>

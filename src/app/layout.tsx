@@ -147,9 +147,9 @@ export default function RootLayout({
         </ThemeProvider>
 
         {/* Google Analytics 4 — loaded after page is interactive */}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-YYJ8P3NDF0" strategy="afterInteractive" />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-CQK221F0EF" strategy="afterInteractive" />
         <Script id="ga-config" strategy="afterInteractive">
-          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-YYJ8P3NDF0',{page_path:window.location.pathname});`}
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CQK221F0EF');`}
         </Script>
       </body>
     </html>

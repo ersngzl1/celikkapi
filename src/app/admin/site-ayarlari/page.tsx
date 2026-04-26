@@ -28,6 +28,7 @@ interface SiteSettings {
   whatsappMessage: string;
   logoLight?: string;
   logoDark?: string;
+  favicon?: string;
 }
 
 const defaultSettings: SiteSettings = {
@@ -109,6 +110,16 @@ export default function SiteAyarlariPage() {
       const base64 = e.target?.result as string;
       const key = mode === 'light' ? 'logoLight' : 'logoDark';
       setSettings(prev => ({ ...prev, [key]: base64 }));
+      setSaved(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFaviconUpload = async (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      setSettings(prev => ({ ...prev, favicon: base64 }));
       setSaved(false);
     };
     reader.readAsDataURL(file);
@@ -228,8 +239,43 @@ export default function SiteAyarlariPage() {
                 </div>
               </div>
               <p className="text-xs text-slate-500 mt-3 p-2 bg-blue-50 rounded">
-                💡 PNG ya da JPG formatında logolarını yükle. Resimleri kaydetmek için en aşağıda "Kaydet" butonuna tıkla.
+                PNG ya da JPG formatinda logolarini yukle. Resimleri kaydetmek icin "Kaydet" butonuna tikla.
               </p>
+            </div>
+
+            <div className="pt-4 border-t border-slate-200">
+              <h4 className="text-xs font-semibold text-slate-800 mb-3">Favicon</h4>
+              <div className="max-w-xs">
+                <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center hover:border-blue-400 transition-colors">
+                  <p className="text-xs font-semibold text-slate-600 mb-2">Site Favicon (Sekme Ikonu)</p>
+                  {settings.favicon ? (
+                    <img src={settings.favicon} alt="Favicon" className="w-12 h-12 mx-auto mb-2 rounded border border-slate-200 object-contain" />
+                  ) : (
+                    <div className="w-12 h-12 mx-auto mb-2 rounded border border-slate-300 bg-slate-50 flex items-center justify-center text-slate-400 text-xs">
+                      Yok
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/png,image/x-icon,image/svg+xml,image/jpeg"
+                    onChange={(e) => e.target.files?.[0] && handleFaviconUpload(e.target.files[0])}
+                    className="hidden"
+                    id="faviconUpload"
+                  />
+                  <label htmlFor="faviconUpload" className="inline-block px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded cursor-pointer hover:bg-blue-600 transition-colors">
+                    Yukle
+                  </label>
+                  {settings.favicon && (
+                    <button onClick={() => { setSettings(prev => ({ ...prev, favicon: undefined })); setSaved(false); }}
+                      className="ml-2 px-3 py-1.5 bg-red-500 text-white text-xs font-medium rounded hover:bg-red-600 transition-colors">
+                      Kaldir
+                    </button>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500 mt-2 p-2 bg-blue-50 rounded">
+                  32x32 veya 64x64 piksel, PNG ya da ICO formati onerilir. Kaydet butonuna tiklamayi unutma.
+                </p>
+              </div>
             </div>
           </div>
         )}

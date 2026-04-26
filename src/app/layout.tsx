@@ -68,8 +68,8 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   icons: {
-    icon: "/uploads/favicon.png",
-    apple: "/uploads/favicon.png",
+    icon: "/api/favicon",
+    apple: "/api/favicon",
   },
   verification: {
     google: "vokkIUykbVjdxJYLUvOxyJj7dzgMZd7nnOETDWZHCpw",

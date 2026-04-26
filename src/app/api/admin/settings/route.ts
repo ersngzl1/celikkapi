@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
     for (const [key, value] of Object.entries(body)) {
       if (ALLOWED_KEYS.has(key) && typeof value === "string") {
         // Logo base64 images can be larger, others have 10000 limit
-        const maxLen = (key === "logoLight" || key === "logoDark") ? 1500000 : 10000;
+        const maxLen = (key === "logoLight" || key === "logoDark" || key === "favicon") ? 1500000 : 10000;
         sanitized[key] = value.slice(0, maxLen);
       } else if (ALLOWED_KEYS.has(key) && typeof value === "boolean") {
         sanitized[key] = value; // Allow booleans for checkboxes

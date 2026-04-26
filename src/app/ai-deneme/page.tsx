@@ -216,7 +216,7 @@ function AIDenemeContent() {
               <p className="animate-slide-up-delay-1 text-sm md:text-base max-w-lg leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)', marginTop: '16px' }}>
                 Evinizin kapı fotoğrafını yükleyin, <strong className="text-[var(--gold-light)]">{preselectedDoor.name}</strong> modelini yapay zeka ile evinizde görün!
               </p>
-              <div className="animate-slide-up-delay-2 flex items-center gap-4 card-gold" style={{ marginTop: '20px', padding: '16px', maxWidth: '400px' }}>
+              <div className="animate-slide-up-delay-2 flex items-center gap-4" style={{ marginTop: '20px', padding: '16px', maxWidth: '400px', borderRadius: '16px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)' }}>
                 <div className="rounded-lg overflow-hidden relative flex-shrink-0" style={{ width: '56px', height: '72px' }}>
                   <Image src={preselectedDoor.image} alt={preselectedDoor.name} fill className="object-cover" sizes="56px" />
                 </div>
@@ -264,7 +264,7 @@ function AIDenemeContent() {
           <div className={showDoorPanel ? "order-2 xl:order-1" : ""}>
             {!uploadedImage ? (
               <div
-                className={`relative rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer`}
+                className={`relative rounded-2xl overflow-hidden transition-all duration-300`}
                 style={{
                   aspectRatio: '4/3',
                   border: isDragging ? '2px solid var(--gold)' : '2px dashed var(--border-light)',
@@ -273,7 +273,6 @@ function AIDenemeContent() {
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
-                onClick={() => fileInputRef.current?.click()}
               >
                 <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ padding: '32px' }}>
                   <div className="flex items-center justify-center" style={{
@@ -287,11 +286,11 @@ function AIDenemeContent() {
                     {isDragging ? "Bırakın..." : "Ev Giriş Fotoğrafınızı Yükleyin"}
                   </p>
                   <p className="text-sm text-[var(--text-muted)] text-center" style={{ marginBottom: '24px' }}>
-                    Dokunarak galeriden seçin veya fotoğraf çekin
+                    Galeriden seçin veya fotoğraf çekin
                   </p>
                   <div className="flex flex-col sm:flex-row items-center gap-3">
                     <button
-                      onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                      onClick={() => fileInputRef.current?.click()}
                       className="flex items-center gap-2 text-sm font-bold rounded-xl transition-all cta-gold"
                       style={{ padding: '12px 24px', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}
                     >
@@ -299,7 +298,7 @@ function AIDenemeContent() {
                       Galeriden Seç
                     </button>
                     <button
-                      onClick={(e) => { e.stopPropagation(); cameraInputRef.current?.click(); }}
+                      onClick={() => cameraInputRef.current?.click()}
                       className="flex items-center gap-2 text-sm font-bold rounded-xl transition-all"
                       style={{ padding: '12px 24px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
                     >

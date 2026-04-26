@@ -199,28 +199,28 @@ export default function HomePage() {
             )}
             {featuredDoors.map((door) => (
               <div key={door.id} className="snap-start shrink-0 w-[75%] sm:w-[48%] lg:w-[31%]">
-                <div className="group relative rounded-2xl overflow-hidden h-[420px] md:h-[480px]" style={{ border: '1px solid var(--border)' }}>
-                  <Image src={door.image} alt={door.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 640px) 75vw, (max-width: 1024px) 48vw, 31vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                <div className="group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-black/10" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+                  {/* Image Area */}
+                  <Link href={`/urun/${door.slug || door.id}`} className="block relative overflow-hidden" style={{ aspectRatio: '3/4', background: 'linear-gradient(145deg, #F4F5F7 0%, #ECEDF0 50%, #E4E5EA 100%)' }}>
+                    <Image src={door.image} alt={door.name} fill className="object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-lg" sizes="(max-width: 640px) 75vw, (max-width: 1024px) 48vw, 31vw" />
+                    <span className="absolute top-3 left-3 text-[10px] uppercase tracking-wider px-3 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#FFFFFF' }}>{door.category}</span>
+                  </Link>
 
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-                    <span className="text-[10px] uppercase tracking-wider px-3 py-1 rounded-full font-bold" style={{ background: 'var(--gold)', color: 'var(--bg-primary)' }}>{door.category}</span>
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)', border: '1px solid var(--border)' }}>
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: door.colorHex, border: '1px solid var(--border-light)' }} />
-                      <span className="text-[10px] font-medium text-[var(--text-secondary)]">{door.color}</span>
+                  {/* Info Area */}
+                  <div className="p-4">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: door.colorHex, border: '1px solid var(--border-light)', boxShadow: `0 0 0 1px ${door.colorHex}33` }} />
+                      <span className="text-[10px] text-[var(--text-muted)] font-medium truncate">{door.color}</span>
                     </div>
-                  </div>
+                    <h3 className="font-serif text-base md:text-lg font-bold text-[var(--text-primary)] group-hover:text-[var(--gold)] transition-colors leading-tight truncate">{door.name}</h3>
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">{door.series}</p>
 
-                  <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
-                    <p className="text-[11px] text-[var(--gold-light)] font-medium uppercase tracking-wider">{door.series}</p>
-                    <h3 className="font-serif text-xl md:text-2xl font-bold text-white mt-1 mb-4">{door.name}</h3>
-
-                    <div className="flex gap-2">
-                      <Link href={`/ai-deneme?door=${door.id}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-bold rounded-xl transition-colors cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
-                        <Sparkles className="w-3.5 h-3.5" /> AI ile Dene
+                    <div className="flex gap-2 mt-3">
+                      <Link href={`/urun/${door.slug || door.id}`} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all hover:opacity-90" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}>
+                        <Eye className="w-3.5 h-3.5" /> İncele
                       </Link>
-                      <Link href={`/urun/${door.slug || door.id}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 text-white text-xs font-bold rounded-xl transition-colors" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}>
-                        <Eye className="w-3.5 h-3.5" /> Detay
+                      <Link href={`/ai-deneme?door=${door.id}`} className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-bold rounded-xl transition-all hover:opacity-90" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
+                        <Sparkles className="w-3.5 h-3.5" />
                       </Link>
                     </div>
                   </div>
@@ -256,28 +256,28 @@ export default function HomePage() {
           <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
             {roomDoors.map((rd) => (
               <div key={rd.id} className="snap-start shrink-0 w-[75%] sm:w-[48%] lg:w-[31%]">
-                <div className="group relative rounded-2xl overflow-hidden h-[420px] md:h-[480px]" style={{ border: '1px solid var(--border)' }}>
-                  <Image src={rd.image} alt={rd.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 640px) 75vw, (max-width: 1024px) 48vw, 31vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                <div className="group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-black/10" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+                  {/* Image Area */}
+                  <Link href={`/urun/${rd.slug || rd.id}`} className="block relative overflow-hidden" style={{ aspectRatio: '3/4', background: 'linear-gradient(145deg, #F4F5F7 0%, #ECEDF0 50%, #E4E5EA 100%)' }}>
+                    <Image src={rd.image} alt={rd.name} fill className="object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-lg" sizes="(max-width: 640px) 75vw, (max-width: 1024px) 48vw, 31vw" />
+                    <span className="absolute top-3 left-3 text-[10px] uppercase tracking-wider px-3 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#FFFFFF' }}>Oda Kapısı</span>
+                  </Link>
 
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-                    <span className="text-[10px] uppercase tracking-wider px-3 py-1 rounded-full font-bold" style={{ background: 'var(--gold)', color: 'var(--bg-primary)' }}>Oda Kapısı</span>
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(8px)', border: '1px solid var(--border)' }}>
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: rd.colorHex, border: '1px solid var(--border-light)' }} />
-                      <span className="text-[10px] font-medium text-[var(--text-secondary)]">{rd.color}</span>
+                  {/* Info Area */}
+                  <div className="p-4">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: rd.colorHex, border: '1px solid var(--border-light)', boxShadow: `0 0 0 1px ${rd.colorHex}33` }} />
+                      <span className="text-[10px] text-[var(--text-muted)] font-medium truncate">{rd.color}</span>
                     </div>
-                  </div>
+                    <h3 className="font-serif text-base md:text-lg font-bold text-[var(--text-primary)] group-hover:text-[var(--gold)] transition-colors leading-tight truncate">{rd.name}</h3>
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">{rd.series}</p>
 
-                  <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
-                    <p className="text-[11px] text-[var(--gold-light)] font-medium uppercase tracking-wider">{rd.series}</p>
-                    <h3 className="font-serif text-xl md:text-2xl font-bold text-white mt-1 mb-4">{rd.name}</h3>
-
-                    <div className="flex gap-2">
-                      <Link href={`/ai-deneme?door=${rd.id}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-bold rounded-xl transition-colors cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
-                        <Sparkles className="w-3.5 h-3.5" /> AI ile Dene
+                    <div className="flex gap-2 mt-3">
+                      <Link href={`/urun/${rd.slug || rd.id}`} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-xl transition-all hover:opacity-90" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}>
+                        <Eye className="w-3.5 h-3.5" /> İncele
                       </Link>
-                      <Link href={`/urun/${rd.id}`} className="flex-1 flex items-center justify-center gap-1.5 py-3 text-white text-xs font-bold rounded-xl transition-colors" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}>
-                        <Eye className="w-3.5 h-3.5" /> Detay
+                      <Link href={`/ai-deneme?door=${rd.id}`} className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-bold rounded-xl transition-all hover:opacity-90" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
+                        <Sparkles className="w-3.5 h-3.5" />
                       </Link>
                     </div>
                   </div>

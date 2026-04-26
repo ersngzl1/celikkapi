@@ -71,6 +71,9 @@ export const metadata: Metadata = {
     icon: "/uploads/favicon.png",
     apple: "/uploads/favicon.png",
   },
+  verification: {
+    google: "vokkIUykbVjdxJYLUvOxyJj7dzgMZd7nnOETDWZHCpw",
+  },
   other: {
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "default",

@@ -18,7 +18,7 @@ import {
   Filter,
   Loader2,
 } from "lucide-react";
-import { doors, categories, colorOptions, filterDoors, Door } from "@/data/doors";
+import { doors, Door } from "@/data/doors";
 import Image from "next/image";
 import { useSettings } from "@/lib/useSettings";
 
@@ -40,20 +40,36 @@ function KatalogContent() {
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [doorsList, setDoorsList] = useState<(Door & { slug?: string })[]>([]);
+  const [categories, setCategories] = useState<{ value: string; label: string }[]>([{ value: "all", label: "Tümü" }]);
+  const [colorOptions, setColorOptions] = useState<{ value: string; label: string }[]>([{ value: "all", label: "Tüm Renkler" }]);
   const [catalogLoading, setCatalogLoading] = useState(true);
   const resultsRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  // Load products from API - no demo flash
+  // Load products and categories from API
   useEffect(() => {
-    const loadDoors = async () => {
+    const loadData = async () => {
       try {
-        const res = await fetch("/api/products");
-        if (res.ok) {
-          const data = await res.json();
-          setDoorsList(data.length > 0 ? data : doors);
+        const [productsRes, catsRes] = await Promise.all([
+          fetch("/api/products"),
+          fetch("/api/products/categories"),
+        ]);
+        if (productsRes.ok) {
+          const data = await productsRes.json();
+          const list = data.length > 0 ? data : doors;
+          setDoorsList(list);
+          // Derive color options from actual products
+          const uniqueColors = [...new Set(list.map((d: any) => d.color))].filter(Boolean).sort() as string[];
+          setColorOptions([
+            { value: "all", label: "Tüm Renkler" },
+            ...uniqueColors.map((c: string) => ({ value: c, label: c })),
+          ]);
         } else {
           setDoorsList(doors);
+        }
+        if (catsRes.ok) {
+          const cats = await catsRes.json();
+          if (cats.length > 1) setCategories(cats);
         }
       } catch {
         setDoorsList(doors);
@@ -61,7 +77,7 @@ function KatalogContent() {
         setCatalogLoading(false);
       }
     };
-    loadDoors();
+    loadData();
   }, []);
 
   const filtered = doorsList

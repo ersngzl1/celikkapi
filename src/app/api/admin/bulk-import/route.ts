@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
           id: nextId,
           name: p.name,
           slug: generateSlug(p.name),
-          series: p.series || "Gold İkizler",
+          series: p.series || "Eko Gold",
           category: p.category || "Eko Laminoks",
           color: p.color || "",
           colorHex: p.colorHex || "#3C3C3C",

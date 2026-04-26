@@ -55,7 +55,8 @@ export default function HomePage() {
   const { settings } = useSettings();
   const { content } = useContent("home");
   const [featuredDoors, setFeaturedDoors] = useState<any[]>([]);
-  const [roomDoors, setRoomDoors] = useState<any[]>([]);
+  const [secondaryDoors, setSecondaryDoors] = useState<any[]>([]);
+  const [secondaryCategory, setSecondaryCategory] = useState("");
   const [totalProducts, setTotalProducts] = useState(0);
   const [galleryItems, setGalleryItems] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
@@ -66,12 +67,21 @@ export default function HomePage() {
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
           setTotalProducts(data.length);
+          // Group by category
+          const cats = [...new Set(data.map((p: any) => p.category))] as string[];
           const featured = data.filter((p: any) => p.featured);
-          const roomOnes = data.filter((p: any) => p.category === "oda" || p.category === "Oda Kapısı");
-          const steelDoors = data.filter((p: any) => p.category !== "oda" && p.category !== "Oda Kapısı");
-          // Featured varsa featured, yoksa çelik kapıları göster
-          setFeaturedDoors(featured.length > 0 ? featured.slice(0, 6) : steelDoors.slice(0, 6));
-          setRoomDoors(roomOnes.slice(0, 6));
+          if (featured.length > 0) {
+            setFeaturedDoors(featured.slice(0, 6));
+          } else if (cats.length > 0) {
+            const firstCat = data.filter((p: any) => p.category === cats[0]);
+            setFeaturedDoors(firstCat.slice(0, 6));
+          }
+          // Second category section
+          if (cats.length > 1) {
+            const secondCat = cats[1];
+            setSecondaryCategory(secondCat);
+            setSecondaryDoors(data.filter((p: any) => p.category === secondCat).slice(0, 6));
+          }
         }
       })
       .catch(() => {})
@@ -237,30 +247,31 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── ODA KAPILARI ─── */}
+      {/* ─── İKİNCİ KATEGORİ ─── */}
+      {secondaryDoors.length > 0 && (
       <section style={{ padding: '64px 0 80px', background: 'var(--bg-primary)' }}>
         <div className="container-custom">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4" style={{ marginBottom: '36px' }}>
             <div>
-              <span className="animate-on-scroll badge-gold" style={{ marginBottom: '12px', display: 'inline-flex' }}>İç Mekan</span>
+              <span className="animate-on-scroll badge-gold" style={{ marginBottom: '12px', display: 'inline-flex' }}>{secondaryCategory}</span>
               <h2 className="animate-on-scroll font-serif text-3xl md:text-5xl font-extrabold" style={{ marginTop: '12px' }}>
-                Öne Çıkan <span className="text-gold">Oda Kapıları</span>
+                <span className="text-gold">{secondaryCategory}</span> Serisi
               </h2>
-              <p className="animate-on-scroll text-[var(--text-secondary)]" style={{ marginTop: '8px' }}>Evinizin iç mekanlarına uyum sağlayan şık oda kapıları.</p>
+              <p className="animate-on-scroll text-[var(--text-secondary)]" style={{ marginTop: '8px' }}>{secondaryCategory} kategorisindeki kapı modellerimiz.</p>
             </div>
-            <Link href="/katalog?category=oda" className="animate-on-scroll group inline-flex items-center gap-2 text-sm font-bold text-[var(--gold-light)] hover:text-[var(--gold)] transition-colors">
-              Tüm Koleksiyon ({roomDoors.length} model) <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <Link href={`/katalog?category=${encodeURIComponent(secondaryCategory)}`} className="animate-on-scroll group inline-flex items-center gap-2 text-sm font-bold text-[var(--gold-light)] hover:text-[var(--gold)] transition-colors">
+              Tüm Koleksiyon ({secondaryDoors.length} model) <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
           <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-            {roomDoors.map((rd) => (
+            {secondaryDoors.map((rd) => (
               <div key={rd.id} className="snap-start shrink-0 w-[75%] sm:w-[48%] lg:w-[31%]">
                 <div className="group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-black/10" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
                   {/* Image Area */}
                   <Link href={`/urun/${rd.slug || rd.id}`} className="block relative overflow-hidden" style={{ aspectRatio: '3/4', background: 'linear-gradient(145deg, #F4F5F7 0%, #ECEDF0 50%, #E4E5EA 100%)' }}>
                     <Image src={rd.image} alt={rd.name} fill className="object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-lg" sizes="(max-width: 640px) 75vw, (max-width: 1024px) 48vw, 31vw" />
-                    <span className="absolute top-3 left-3 text-[10px] uppercase tracking-wider px-3 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#FFFFFF' }}>Oda Kapısı</span>
+                    <span className="absolute top-3 left-3 text-[10px] uppercase tracking-wider px-3 py-1 rounded-full font-bold shadow-sm" style={{ background: 'var(--gold)', color: '#FFFFFF' }}>{rd.category}</span>
                   </Link>
 
                   {/* Info Area */}
@@ -287,12 +298,13 @@ export default function HomePage() {
           </div>
 
           <div className="mt-8 text-center">
-            <Link href="/katalog?category=oda" className="inline-flex items-center gap-2 px-8 py-4 font-bold rounded-xl transition-all text-[15px]" style={{ border: '1px solid var(--border-light)', color: 'var(--text-primary)' }}>
-              Tüm Oda Kapısı Modelleri <ArrowRight className="w-4 h-4" />
+            <Link href={`/katalog?category=${encodeURIComponent(secondaryCategory)}`} className="inline-flex items-center gap-2 px-8 py-4 font-bold rounded-xl transition-all text-[15px]" style={{ border: '1px solid var(--border-light)', color: 'var(--text-primary)' }}>
+              Tüm {secondaryCategory} Modelleri <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </section>
+      )}
 
       {/* ─── AI KAPI GÖRÜNTÜLE ─── */}
       <section className="relative overflow-hidden" style={{ padding: '80px 0' }}>

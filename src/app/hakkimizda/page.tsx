@@ -60,7 +60,7 @@ export default function HakkimizdaPage() {
         }} />
         <div className="absolute top-10 right-[20%] w-32 h-32 rounded-full blur-3xl animate-float" style={{ background: 'var(--gold-badge-bg)' }} />
 
-        <div className="container-custom relative z-10" style={{ padding: '48px 24px 56px', color: 'var(--text-primary)' }}>
+        <div className="container-custom relative z-10" style={{ padding: '48px 24px 56px', color: '#FFFFFF' }}>
           <span className="badge-gold" style={{ marginBottom: '20px', display: 'inline-flex' }}>
             <Building2 className="w-3.5 h-3.5" />
             Hakkımızda
@@ -68,7 +68,7 @@ export default function HakkimizdaPage() {
           <h1 className="font-serif text-4xl md:text-6xl font-extrabold leading-tight max-w-3xl" style={{ lineHeight: '1.1' }}>
             Adana&apos;da Çelik Kapının <span className="text-gold">Güvenilir Adresi</span>
           </h1>
-          <p className="text-[var(--text-muted)] max-w-2xl text-base md:text-lg leading-relaxed" style={{ marginTop: '16px' }}>
+          <p className="text-white/60 max-w-2xl text-base md:text-lg leading-relaxed" style={{ marginTop: '16px' }}>
             Best Kapı, Best Pen firmasının alt markası olarak Adana ve çevre illerde çelik kapı sektöründe hizmet vermektedir. Güvenliğiniz bizim önceliğimiz.
           </p>
         </div>
@@ -223,17 +223,17 @@ export default function HakkimizdaPage() {
       <section className="relative overflow-hidden" style={{ background: 'var(--hero-gradient)' }}>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(200,165,92,0.1)_0%,transparent_70%)]" />
         <div className="container-custom text-center relative z-10" style={{ padding: '56px 24px' }}>
-          <h2 className="font-serif text-3xl md:text-4xl font-extrabold text-[var(--text-primary)]" style={{ marginBottom: '16px' }}>
+          <h2 className="font-serif text-3xl md:text-4xl font-extrabold text-white" style={{ marginBottom: '16px' }}>
             Adana&apos;da Çelik Kapı İhtiyacınız mı Var?
           </h2>
-          <p className="text-[var(--text-muted)] max-w-lg mx-auto" style={{ marginBottom: '32px' }}>
+          <p className="text-white/60 max-w-lg mx-auto" style={{ marginBottom: '32px' }}>
             Best Kapı olarak size en uygun çelik kapı çözümünü sunmak için hazırız. Hemen iletişime geçin.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3" style={{ maxWidth: '420px', margin: '0 auto' }}>
             <Link href="/iletisim" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 font-bold rounded-xl transition-colors text-[15px] cta-gold" style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
               İletişime Geçin <ArrowRight className="w-4 h-4" />
             </Link>
-            <PhoneCTA className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-[var(--text-primary)] font-bold rounded-xl transition-colors text-[15px]" style={{ border: '1px solid var(--border-light)' }} />
+            <PhoneCTA className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-white font-bold rounded-xl transition-colors text-[15px]" style={{ border: '1px solid rgba(255,255,255,0.2)' }} />
           </div>
         </div>
       </section>

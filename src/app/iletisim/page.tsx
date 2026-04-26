@@ -101,7 +101,7 @@ export default function IletisimPage() {
           backgroundSize: "60px 60px",
         }} />
 
-        <div className="container-custom relative z-10" style={{ padding: '48px 24px 56px', color: 'var(--text-primary)' }}>
+        <div className="container-custom relative z-10" style={{ padding: '48px 24px 56px', color: '#FFFFFF' }}>
           <span className="badge-gold" style={{ marginBottom: '20px', display: 'inline-flex' }}>
             <MessageSquare className="w-3.5 h-3.5" />
             İletişim
@@ -109,7 +109,7 @@ export default function IletisimPage() {
           <h1 className="font-serif text-4xl md:text-6xl font-extrabold leading-tight max-w-3xl" style={{ lineHeight: '1.1' }}>
             Bize <span className="text-gold">Ulaşın</span>
           </h1>
-          <p className="text-[var(--text-muted)] max-w-xl text-base md:text-lg leading-relaxed" style={{ marginTop: '16px' }}>
+          <p className="text-white/60 max-w-xl text-base md:text-lg leading-relaxed" style={{ marginTop: '16px' }}>
             Adana ve çevre illerde çelik kapı keşif, teklif veya herhangi bir sorunuz için bize ulaşabilirsiniz.
           </p>
         </div>

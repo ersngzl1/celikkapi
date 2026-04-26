@@ -25,10 +25,10 @@ export default function Footer() {
         <div className="container-custom relative z-10" style={{ padding: '48px 24px' }}>
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left flex-shrink-0">
-              <h3 className="font-serif text-xl sm:text-2xl md:text-3xl font-extrabold text-[var(--text-primary)]" style={{ marginBottom: '8px', lineHeight: '1.2' }}>
+              <h3 className="font-serif text-xl sm:text-2xl md:text-3xl font-extrabold text-white" style={{ marginBottom: '8px', lineHeight: '1.2' }}>
                 Adana&apos;da çelik kapı denince<br className="hidden sm:block" /> <span className="text-gold">akla gelen isim</span>
               </h3>
-              <p className="text-sm text-[var(--text-muted)]">
+              <p className="text-sm text-white/60">
                 WhatsApp&apos;tan hemen yazın, uzman ekibimiz size en uygun çözümü sunsun.
               </p>
             </div>
@@ -40,7 +40,7 @@ export default function Footer() {
               <a href={`tel:${settings.phone.replace(/[^0-9+]/g, "")}`} className="flex items-center justify-center gap-2 font-bold rounded-xl transition-colors text-sm whitespace-nowrap cta-gold" style={{ padding: '14px 24px', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: 'var(--bg-primary)' }}>
                 <Phone className="w-4 h-4 flex-shrink-0" /> {settings.phone}
               </a>
-              <Link href="/iletisim" className="flex items-center justify-center gap-2 text-[var(--text-primary)] font-bold rounded-xl transition-colors text-sm whitespace-nowrap" style={{ padding: '14px 24px', border: '1px solid var(--border-light)' }}>
+              <Link href="/iletisim" className="flex items-center justify-center gap-2 text-white font-bold rounded-xl transition-colors text-sm whitespace-nowrap" style={{ padding: '14px 24px', border: '1px solid rgba(255,255,255,0.2)' }}>
                 Teklif Formu <ArrowRight className="w-4 h-4 flex-shrink-0" />
               </Link>
             </div>

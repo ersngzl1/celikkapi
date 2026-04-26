@@ -171,6 +171,7 @@ function mapProduct(p: any) {
     description: p.description,
     features: typeof p.features === "string" ? JSON.parse(p.features) : (p.features || []),
     image: p.image,
+    installedImage: p.installedimage ?? p.installedImage ?? null,
     inStock: p.instock ?? p.inStock ?? 1,
     featured: p.featured ?? 0,
     createdAt: p.createdat ?? p.createdAt,

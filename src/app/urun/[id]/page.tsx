@@ -94,9 +94,10 @@ export default function UrunDetay() {
     );
   }
 
-  // Galeri resimleri - sadece gerçek kapı fotoğrafı
+  // Galeri resimleri
   const galleryImages = [
     { type: "main", src: door.image, label: "Ana Görünüm" },
+    ...(door.installedImage ? [{ type: "installed", src: door.installedImage, label: "Evde Takılmış Hali" }] : []),
   ];
 
   // relatedDoors loaded via useEffect above
@@ -139,7 +140,7 @@ export default function UrunDetay() {
                 style={{ border: '1px solid var(--border)' }}
                 onClick={() => setZoomOpen(true)}
               >
-                <Image src={galleryImages[activeImageIdx].src} alt={galleryImages[activeImageIdx].label} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" priority />
+                <Image src={galleryImages[activeImageIdx].src} alt={galleryImages[activeImageIdx].label} fill className={galleryImages[activeImageIdx].type === "installed" ? "object-cover" : "object-contain"} sizes="(max-width: 1024px) 100vw, 50vw" priority style={galleryImages[activeImageIdx].type !== "installed" ? { background: 'linear-gradient(145deg, #F4F5F7 0%, #ECEDF0 50%, #E4E5EA 100%)' } : undefined} />
 
                 {/* Zoom hint */}
                 <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 pointer-events-none">

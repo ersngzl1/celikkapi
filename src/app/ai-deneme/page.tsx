@@ -73,6 +73,9 @@ function AIDenemeContent() {
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const uploadAreaRef = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(0);
+  const [progressMsg, setProgressMsg] = useState("");
 
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) return;
@@ -113,6 +116,10 @@ function AIDenemeContent() {
     setSelectedDoor(doorId);
     setResultImage(null);
     setError(null);
+    // Mobilde kapı seçilince upload alanına scroll
+    setTimeout(() => {
+      uploadAreaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
   };
 
   const currentDoor = doors.find((d) => d.id === selectedDoor) || doors[0];
@@ -147,11 +154,42 @@ function AIDenemeContent() {
     });
   };
 
+  const progressMessages = [
+    "Fotoğrafınız analiz ediliyor...",
+    "Kapı ölçüleri hesaplanıyor...",
+    "Renk uyumu ayarlanıyor...",
+    "Perspektif düzeltiliyor...",
+    "Kapı modeli yerleştiriliyor...",
+    "Gölgeler ekleniyor...",
+    "Işık ayarları yapılıyor...",
+    "Son rötuşlar yapılıyor...",
+    "Neredeyse hazır...",
+  ];
+
   const generateImage = async () => {
     if (!uploadedImage) return;
     setIsProcessing(true);
     setError(null);
     setResultImage(null);
+    setProgress(0);
+    setProgressMsg(progressMessages[0]);
+
+    // Progress bar simülasyonu
+    let currentProgress = 0;
+    let msgIndex = 0;
+    const progressInterval = setInterval(() => {
+      // Yavaşça ilerle, %90'da dur (gerçek sonuç gelene kadar)
+      const increment = currentProgress < 30 ? 3 : currentProgress < 60 ? 2 : currentProgress < 85 ? 1 : 0.3;
+      currentProgress = Math.min(currentProgress + increment, 92);
+      setProgress(currentProgress);
+
+      // Her %10'da mesaj değiştir
+      const newIndex = Math.min(Math.floor(currentProgress / 11), progressMessages.length - 1);
+      if (newIndex !== msgIndex) {
+        msgIndex = newIndex;
+        setProgressMsg(progressMessages[msgIndex]);
+      }
+    }, 500);
 
     try {
       const resizedUserImage = await resizeImage(uploadedImage);
@@ -168,17 +206,27 @@ function AIDenemeContent() {
 
       const data = await res.json();
 
+      clearInterval(progressInterval);
+
       if (!res.ok) {
+        setProgress(0);
         setError(data.error || "Görsel üretimi başarısız oldu.");
         return;
       }
 
       if (data.output) {
+        // Tamamlandı animasyonu
+        setProgress(100);
+        setProgressMsg("Tamamlandı!");
+        await new Promise(r => setTimeout(r, 500));
         setResultImage(data.output);
       } else {
+        setProgress(0);
         setError("Sonuç görseli alınamadı.");
       }
     } catch {
+      clearInterval(progressInterval);
+      setProgress(0);
       setError("Bağlantı hatası. Lütfen tekrar deneyin.");
     } finally {
       setIsProcessing(false);
@@ -259,9 +307,32 @@ function AIDenemeContent() {
       </div>
 
       <div className="container-custom" style={{ marginTop: '24px' }}>
+        {/* Nasıl Çalışır — Mobilde üstte, kompakt */}
+        {!uploadedImage && !resultImage && (
+          <div style={{ marginBottom: '24px' }}>
+            <div className="flex items-center gap-6 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
+              {[
+                { n: "1", icon: "📸", text: "Kapınızın fotoğrafını çekin" },
+                { n: "2", icon: "🚪", text: "Beğendiğiniz modeli seçin" },
+                { n: "3", icon: "✨", text: "AI kapıyı evinize yerleştirsin" },
+              ].map((s, i) => (
+                <div key={s.n} className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center justify-center" style={{
+                    width: '32px', height: '32px', borderRadius: '50%',
+                    background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))',
+                    color: '#FFFFFF', fontSize: '14px', fontWeight: 700, flexShrink: 0,
+                  }}>{s.n}</div>
+                  <span className="text-sm text-[var(--text-secondary)] whitespace-nowrap">{s.text}</span>
+                  {i < 2 && <span className="text-[var(--text-muted)] mx-1">→</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className={`grid grid-cols-1 ${showDoorPanel ? "xl:grid-cols-[1fr_360px]" : ""} gap-6`}>
-          {/* Main Area */}
-          <div className={showDoorPanel ? "order-2 xl:order-1" : ""}>
+          {/* Main Area — Upload */}
+          <div ref={uploadAreaRef} className={showDoorPanel ? "order-2 xl:order-1" : ""}>
             {!uploadedImage ? (
               <div
                 className={`relative rounded-2xl overflow-hidden transition-all duration-300`}
@@ -344,12 +415,28 @@ function AIDenemeContent() {
                   )}
                 </div>
 
-                {/* Processing */}
+                {/* Processing — Progress Bar */}
                 {isProcessing && (
-                  <div className="flex flex-col items-center justify-center card-gold" style={{ padding: '32px' }}>
-                    <Loader2 className="w-12 h-12 animate-spin" style={{ color: 'var(--gold)', marginBottom: '16px' }} />
-                    <p className="text-sm font-medium text-[var(--text-primary)]">AI görsel üretiyor...</p>
-                    <p className="text-xs text-[var(--text-muted)]" style={{ marginTop: '4px' }}>Bu işlem 30-60 saniye sürebilir</p>
+                  <div className="card-gold" style={{ padding: '24px' }}>
+                    <div className="flex items-center justify-between" style={{ marginBottom: '12px' }}>
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" style={{ color: 'var(--gold)' }} />
+                        <p className="text-sm font-semibold text-[var(--text-primary)]">{progressMsg}</p>
+                      </div>
+                      <span className="text-xs font-bold" style={{ color: 'var(--gold)' }}>{Math.round(progress)}%</span>
+                    </div>
+                    <div style={{ width: '100%', height: '8px', borderRadius: '999px', background: 'var(--bg-secondary)', overflow: 'hidden' }}>
+                      <div style={{
+                        width: `${progress}%`,
+                        height: '100%',
+                        borderRadius: '999px',
+                        background: 'linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light))',
+                        transition: 'width 0.5s ease-out',
+                      }} />
+                    </div>
+                    <p className="text-xs text-[var(--text-muted)] text-center" style={{ marginTop: '10px' }}>
+                      Bu islem 30-60 saniye surebilir
+                    </p>
                   </div>
                 )}
 
@@ -431,10 +518,17 @@ function AIDenemeContent() {
           {/* Door Selection Panel */}
           {showDoorPanel && (
             <div className={preselectedDoor ? "" : "order-1 xl:order-2"}>
-              <div className="xl:sticky xl:top-24">
-                <h3 style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--gold)', fontWeight: 700, marginBottom: '16px' }}>
+              <div className="flex items-center justify-between" style={{ marginBottom: '12px' }}>
+                <h3 style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--gold)', fontWeight: 700 }}>
                   Kapı Modeli Seçin
                 </h3>
+                {selectedDoor > 0 && !uploadedImage && (
+                  <span className="text-xs text-[var(--text-muted)] xl:hidden animate-pulse">
+                    ↓ Secim sonrasi asagi kaydirilacak
+                  </span>
+                )}
+              </div>
+              <div className="xl:sticky xl:top-24">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-2 gap-3 overflow-y-auto pr-1" style={{ maxHeight: 'calc(100vh - 200px)' }}>
                   {doors.map((door) => {
                     const isSelected = selectedDoor === door.id;
@@ -503,30 +597,6 @@ function AIDenemeContent() {
           </div>
         </div>
 
-        {/* How it works */}
-        <div style={{ marginTop: '80px' }}>
-          <h3 className="text-center font-serif text-2xl md:text-3xl font-extrabold text-[var(--text-primary)]" style={{ marginBottom: '40px' }}>
-            Nasıl <span className="text-gold">Çalışır?</span>
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            {[
-              { step: "01", title: "Fotoğraf Çekin", desc: "Telefonunuzla evinizin kapısının fotoğrafını çekin ve yukarıdaki alana yükleyin." },
-              { step: "02", title: "Kapı Seçin", desc: "Sağ panelden beğendiğiniz kapı modelini seçin." },
-              { step: "03", title: "AI Üretsin!", desc: "Yapay zeka seçtiğiniz kapıyı evinize yerleştirsin. Beğenirseniz bizi arayın!" },
-            ].map((item) => (
-              <div key={item.step} className="text-center card-gold" style={{ padding: '24px' }}>
-                <div className="flex items-center justify-center mx-auto" style={{
-                  width: '48px', height: '48px', borderRadius: '14px', marginBottom: '16px',
-                  background: 'var(--gold-badge-bg)', border: '1px solid var(--stat-border)',
-                }}>
-                  <span className="font-serif text-lg font-bold text-[var(--gold)]">{item.step}</span>
-                </div>
-                <h4 className="font-serif text-base font-semibold text-[var(--text-primary)]" style={{ marginBottom: '8px' }}>{item.title}</h4>
-                <p className="text-sm text-[var(--text-muted)] leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

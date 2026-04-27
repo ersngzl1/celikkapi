@@ -96,7 +96,7 @@ function AIDenemeContent() {
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) return;
     if (file.size > 10 * 1024 * 1024) {
-      setError("Dosya 10MB'dan buyuk olamaz!");
+      setError("Dosya 10MB'dan büyük olamaz!");
       return;
     }
     const reader = new FileReader();
@@ -169,15 +169,15 @@ function AIDenemeContent() {
   };
 
   const progressMessages = [
-    "Fotograf analiz ediliyor...",
-    "Kapi olculeri hesaplaniyor...",
-    "Renk uyumu ayarlaniyor...",
-    "Perspektif duzeltiliyor...",
-    "Kapi modeli yerlestiriliyor...",
-    "Golgeler ekleniyor...",
-    "Isik ayarlari yapiliyor...",
-    "Son retuslar yapiliyor...",
-    "Neredeyse hazir...",
+    "Fotoğrafınız analiz ediliyor...",
+    "Kapı ölçüleri hesaplanıyor...",
+    "Renk uyumu ayarlanıyor...",
+    "Perspektif düzeltiliyor...",
+    "Kapı modeli yerleştiriliyor...",
+    "Gölgeler ekleniyor...",
+    "Işık ayarları yapılıyor...",
+    "Son rötuşlar yapılıyor...",
+    "Neredeyse hazır...",
   ];
 
   const generateImage = async () => {
@@ -217,22 +217,22 @@ function AIDenemeContent() {
 
       if (!res.ok) {
         setProgress(0);
-        setError(data.error || "Gorsel uretimi basarisiz oldu.");
+        setError(data.error || "Görsel üretimi başarısız oldu.");
         return;
       }
       if (data.output) {
         setProgress(100);
-        setProgressMsg("Tamamlandi!");
+        setProgressMsg("Tamamlandı!");
         await new Promise(r => setTimeout(r, 500));
         setResultImage(data.output);
       } else {
         setProgress(0);
-        setError("Sonuc gorseli alinamadi.");
+        setError("Sonuç görseli alınamadı.");
       }
     } catch {
       clearInterval(progressInterval);
       setProgress(0);
-      setError("Baglanti hatasi. Lutfen tekrar deneyin.");
+      setError("Bağlantı hatası. Lütfen tekrar deneyin.");
     } finally {
       setIsProcessing(false);
     }
@@ -244,7 +244,7 @@ function AIDenemeContent() {
     setError(null);
   };
 
-  const waMessageForDoor = `Merhaba, ${currentDoor?.name || "kapi"} modeli hakkinda bilgi almak istiyorum. AI ile denedim ve begeniyorum.`;
+  const waMessageForDoor = `Merhaba, ${currentDoor?.name || "kapı"} modeli hakkında bilgi almak istiyorum. AI ile denedim ve beğeniyorum.`;
 
   return (
     <div className="min-h-screen" style={{ paddingBottom: '64px' }}>
@@ -254,16 +254,16 @@ function AIDenemeContent() {
         <div className="container-custom relative z-10" style={{ padding: '32px 24px 36px' }}>
           <span className="badge-gold" style={{ marginBottom: '16px', display: 'inline-flex' }}>
             <Sparkles className="w-3.5 h-3.5" />
-            AI ile Kapinizi Gorun
+            AI ile Kapınızı Görün
           </span>
 
           {preselectedDoor ? (
             <>
               <h1 className="font-serif text-2xl md:text-4xl font-extrabold text-white" style={{ lineHeight: '1.1', maxWidth: '700px' }}>
-                <span className="text-gold">{preselectedDoor.name}</span> Evinizde Nasil Durur?
+                <span className="text-gold">{preselectedDoor.name}</span> Evinizde Nasıl Durur?
               </h1>
               <p className="text-sm max-w-lg" style={{ color: 'rgba(255,255,255,0.6)', marginTop: '12px' }}>
-                Fotograf yukleyin, yapay zeka kapiyi evinize yerlestirsin!
+                Fotoğraf yükleyin, yapay zeka kapıyı evinize yerleştirsin!
               </p>
               <div className="flex items-center gap-4" style={{ marginTop: '16px', padding: '12px 16px', maxWidth: '380px', borderRadius: '14px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
                 <div className="rounded-lg overflow-hidden relative flex-shrink-0" style={{ width: '48px', height: '64px' }}>
@@ -276,17 +276,17 @@ function AIDenemeContent() {
                 <button onClick={() => setShowDoorPanel(!showDoorPanel)}
                   className="text-xs font-semibold flex-shrink-0"
                   style={{ color: 'var(--gold-light)', padding: '6px 10px', borderRadius: '8px', background: 'var(--gold-badge-bg)' }}>
-                  Degistir {showDoorPanel ? <ChevronUp className="w-3 h-3 inline" /> : <ChevronDown className="w-3 h-3 inline" />}
+                  Değiştir {showDoorPanel ? <ChevronUp className="w-3 h-3 inline" /> : <ChevronDown className="w-3 h-3 inline" />}
                 </button>
               </div>
             </>
           ) : (
             <>
               <h1 className="font-serif text-2xl md:text-4xl lg:text-5xl font-extrabold text-white" style={{ lineHeight: '1.1' }}>
-                Kapi <span className="text-gold">Nasil Durur?</span> Hemen Gorun!
+                Kapı <span className="text-gold">Nasıl Durur?</span> Hemen Görün!
               </h1>
               <p className="text-sm max-w-md" style={{ color: 'rgba(255,255,255,0.6)', marginTop: '12px' }}>
-                Kapi modelini secin, evinizin fotografini yukleyin, yapay zeka kapiyi evinize yerlestirsin!
+                Kapı modelini seçin, evinizin fotoğrafını yükleyin, yapay zeka kapıyı evinize yerleştirsin!
               </p>
             </>
           )}
@@ -310,7 +310,7 @@ function AIDenemeContent() {
                   <p className="text-xs text-[var(--text-muted)]">{currentDoor.series}</p>
                 </div>
                 {!uploadedImage && (
-                  <span className="text-xs text-[var(--gold)] font-medium flex-shrink-0">Secili</span>
+                  <span className="text-xs text-[var(--gold)] font-medium flex-shrink-0">Seçili</span>
                 )}
               </div>
             )}
@@ -337,10 +337,10 @@ function AIDenemeContent() {
                     <Camera className="w-7 h-7" style={{ color: isDragging ? 'var(--gold)' : 'var(--gold-dark)' }} />
                   </div>
                   <p className="text-base font-bold text-[var(--text-primary)] text-center" style={{ marginBottom: '4px' }}>
-                    {isDragging ? "Birakin..." : "Evinizin Fotografini Yukleyin"}
+                    {isDragging ? "Bırakın..." : "Evinizin Fotoğrafını Yükleyin"}
                   </p>
                   <p className="text-xs text-[var(--text-muted)] text-center" style={{ marginBottom: '20px' }}>
-                    Kapiyi gosterecek sekilde fotografini cekin
+                    Kapıyı gösterecek şekilde fotoğrafını çekin
                   </p>
                   <div className="flex items-center gap-3">
                     <button
@@ -349,7 +349,7 @@ function AIDenemeContent() {
                       style={{ padding: '12px 22px', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF' }}
                     >
                       <Camera className="w-4 h-4" />
-                      Fotograf Cek
+                      Fotoğraf Çek
                     </button>
                     <button
                       onClick={() => fileInputRef.current?.click()}
@@ -357,7 +357,7 @@ function AIDenemeContent() {
                       style={{ padding: '12px 22px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
                     >
                       <ImageIcon className="w-4 h-4" />
-                      Galeriden Sec
+                      Galeriden Seç
                     </button>
                   </div>
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileInput} className="hidden" />
@@ -371,9 +371,9 @@ function AIDenemeContent() {
                   {/* Yuklenen */}
                   <div className="relative rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
                     <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-lg text-xs font-medium" style={{ background: 'rgba(0,0,0,0.6)', color: 'white' }}>
-                      Yuklenen Fotograf
+                      Yüklenen Fotoğraf
                     </div>
-                    <img src={uploadedImage} alt="Yuklenen" className="w-full object-cover" style={{ aspectRatio: '4/3' }} />
+                    <img src={uploadedImage} alt="Yüklenen" className="w-full object-cover" style={{ aspectRatio: '4/3' }} />
                   </div>
 
                   {/* AI Sonucu */}
@@ -429,7 +429,7 @@ function AIDenemeContent() {
                         style={{ padding: '14px 16px', fontSize: '14px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
                       >
                         <Download className="w-4 h-4" />
-                        Gorseli Indir
+                        Görseli İndir
                       </a>
                     </div>
                   </div>
@@ -455,7 +455,7 @@ function AIDenemeContent() {
                       }} />
                     </div>
                     <p className="text-xs text-[var(--text-muted)] text-center" style={{ marginTop: '10px' }}>
-                      Bu islem 30-60 saniye surebilir
+                      Bu işlem 30-60 saniye sürebilir
                     </p>
                   </div>
                 )}
@@ -466,7 +466,7 @@ function AIDenemeContent() {
                     <AlertTriangle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--gold)', marginTop: '2px' }} />
                     <div>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{error}</p>
-                      <p className="text-xs text-[var(--text-muted)]" style={{ marginTop: '4px' }}>Tekrar deneyin. Sorun devam ederse bizi arayin.</p>
+                      <p className="text-xs text-[var(--text-muted)]" style={{ marginTop: '4px' }}>Tekrar deneyin. Sorun devam ederse bizi arayın.</p>
                     </div>
                   </div>
                 )}
@@ -480,11 +480,11 @@ function AIDenemeContent() {
                     style={{ padding: '14px 20px', background: 'linear-gradient(135deg, var(--gold), var(--gold-dark))', color: '#FFFFFF', fontSize: '15px', minWidth: '160px' }}
                   >
                     {isProcessing ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> Uretiliyor...</>
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Üretiliyor...</>
                     ) : resultImage ? (
-                      <><RotateCcw className="w-4 h-4" /> Tekrar Uret</>
+                      <><RotateCcw className="w-4 h-4" /> Tekrar Üret</>
                     ) : (
-                      <><Sparkles className="w-4 h-4" /> AI ile Uret</>
+                      <><Sparkles className="w-4 h-4" /> AI ile Üret</>
                     )}
                   </button>
                   <div className="flex gap-2">
@@ -519,7 +519,7 @@ function AIDenemeContent() {
                 {/* Baslik + Arama */}
                 <div>
                   <h3 style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--gold)', fontWeight: 700, marginBottom: '10px' }}>
-                    Kapi Modeli Secin
+                    Kapı Modeli Seçin
                   </h3>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} />
@@ -527,7 +527,7 @@ function AIDenemeContent() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Kapi ara..."
+                      placeholder="Kapı ara..."
                       className="w-full text-sm rounded-xl"
                       style={{ padding: '10px 12px 10px 36px', background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }}
                     />
@@ -547,7 +547,7 @@ function AIDenemeContent() {
                         border: activeCategory === "all" ? 'none' : '1px solid var(--border)',
                       }}
                     >
-                      Tumu ({doors.length})
+                      Tümü ({doors.length})
                     </button>
                     {categories.map(cat => {
                       const count = doors.filter(d => d.category === cat).length;
@@ -606,7 +606,7 @@ function AIDenemeContent() {
 
                 {filteredDoors.length === 0 && (
                   <div className="text-center" style={{ padding: '24px' }}>
-                    <p className="text-sm text-[var(--text-muted)]">Sonuc bulunamadi</p>
+                    <p className="text-sm text-[var(--text-muted)]">Sonuç bulunamadı</p>
                   </div>
                 )}
               </div>
@@ -619,10 +619,10 @@ function AIDenemeContent() {
           <div className="relative overflow-hidden" style={{ marginTop: '40px', borderRadius: '16px', background: 'var(--hero-gradient)', border: '1px solid var(--border)' }}>
             <div className="relative z-10 text-center" style={{ padding: '32px 20px' }}>
               <h3 className="font-serif text-lg md:text-xl font-extrabold text-white" style={{ marginBottom: '8px' }}>
-                Yardima mi ihtiyaciniz var?
+                Yardıma mı ihtiyacınız var?
               </h3>
               <p className="text-sm text-white/60 max-w-sm mx-auto" style={{ marginBottom: '20px' }}>
-                Kapi secimi konusunda yardim almak icin bize ulasin.
+                Kapı seçimi konusunda yardım almak için bize ulaşın.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <a href={`https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(settings.whatsappMessage)}`} target="_blank" rel="noopener noreferrer"

@@ -239,7 +239,7 @@ export default function SiteAyarlariPage() {
                 </div>
               </div>
               <p className="text-xs text-slate-500 mt-3 p-2 bg-blue-50 rounded">
-                PNG ya da JPG formatinda logolarini yukle. Resimleri kaydetmek icin "Kaydet" butonuna tikla.
+                PNG ya da JPG formatında logolarını yükle. Resimleri kaydetmek için "Kaydet" butonuna tıkla.
               </p>
             </div>
 
@@ -247,7 +247,7 @@ export default function SiteAyarlariPage() {
               <h4 className="text-xs font-semibold text-slate-800 mb-3">Favicon</h4>
               <div className="max-w-xs">
                 <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center hover:border-blue-400 transition-colors">
-                  <p className="text-xs font-semibold text-slate-600 mb-2">Site Favicon (Sekme Ikonu)</p>
+                  <p className="text-xs font-semibold text-slate-600 mb-2">Site Favicon (Sekme İkonu)</p>
                   {settings.favicon ? (
                     <img src={settings.favicon} alt="Favicon" className="w-12 h-12 mx-auto mb-2 rounded border border-slate-200 object-contain" />
                   ) : (
@@ -263,17 +263,17 @@ export default function SiteAyarlariPage() {
                     id="faviconUpload"
                   />
                   <label htmlFor="faviconUpload" className="inline-block px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded cursor-pointer hover:bg-blue-600 transition-colors">
-                    Yukle
+                    Yükle
                   </label>
                   {settings.favicon && (
                     <button onClick={() => { setSettings(prev => ({ ...prev, favicon: undefined })); setSaved(false); }}
                       className="ml-2 px-3 py-1.5 bg-red-500 text-white text-xs font-medium rounded hover:bg-red-600 transition-colors">
-                      Kaldir
+                      Kaldır
                     </button>
                   )}
                 </div>
                 <p className="text-xs text-slate-500 mt-2 p-2 bg-blue-50 rounded">
-                  32x32 veya 64x64 piksel, PNG ya da ICO formati onerilir. Kaydet butonuna tiklamayi unutma.
+                  32x32 veya 64x64 piksel, PNG ya da ICO formatı önerilir. Kaydet butonuna tıklamayı unutma.
                 </p>
               </div>
             </div>

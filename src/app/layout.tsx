@@ -169,10 +169,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <ServiceWorkerRegister />
         </ThemeProvider>
 
-        {/* Google Analytics 4 — loaded after page is interactive */}
+        {/* Google Analytics 4 + Google Ads */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-CQK221F0EF" strategy="afterInteractive" />
         <Script id="ga-config" strategy="afterInteractive">
-          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CQK221F0EF');`}
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CQK221F0EF');gtag('config','AW-584444459');`}
         </Script>
       </body>
     </html>

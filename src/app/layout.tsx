@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Montserrat, Poppins } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
@@ -7,6 +8,20 @@ import Footer from "@/components/Footer";
 import FloatingCTA from "@/components/FloatingCTA";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-montserrat",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-poppins",
+});
 
 export const viewport: Viewport = {
   themeColor: "#FFFFFF",
@@ -127,7 +142,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
+    <html lang="tr" className={`${montserrat.variable} ${poppins.variable}`}>
       <head>
         {/* Theme: Flash önlemek için synchronous — bu render-blocking olmalı */}
         <script
@@ -136,16 +151,7 @@ export default function RootLayout({
           }}
         />
 
-        {/* Google Tag Manager */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PWV664SF');`,
-          }}
-        />
+        {/* Google Tag Manager — deferred for performance */}
 
         {/* Structured Data */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -169,9 +175,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <ServiceWorkerRegister />
         </ThemeProvider>
 
+        {/* GTM — loaded after page interactive */}
+        <Script id="gtm" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-PWV664SF');`}
+        </Script>
         {/* Google Analytics 4 + Google Ads */}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-CQK221F0EF" strategy="afterInteractive" />
-        <Script id="ga-config" strategy="afterInteractive">
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-CQK221F0EF" strategy="lazyOnload" />
+        <Script id="ga-config" strategy="lazyOnload">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CQK221F0EF');gtag('config','AW-584444459');`}
         </Script>
       </body>

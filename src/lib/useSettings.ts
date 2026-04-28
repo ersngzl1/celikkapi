@@ -50,7 +50,7 @@ const defaults: SiteSettings = {
 let cached: SiteSettings | null = null;
 let cacheTime = 0;
 let fetchPromise: Promise<SiteSettings> | null = null;
-const CACHE_TTL = 30_000; // 30 seconds
+const CACHE_TTL = 300_000; // 5 minutes
 
 function isCacheValid(): boolean {
   return cached !== null && (Date.now() - cacheTime) < CACHE_TTL;

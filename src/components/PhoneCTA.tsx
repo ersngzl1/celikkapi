@@ -8,7 +8,7 @@ export default function PhoneCTA({ className, style }: { className?: string; sty
   return (
     <a
       href={`tel:${settings.phone.replace(/[^0-9+]/g, "")}`}
-      className={className}
+      className={`gtm-phone ${className || ""}`}
       style={style}
     >
       <Phone className="w-4 h-4" /> {settings.phone}

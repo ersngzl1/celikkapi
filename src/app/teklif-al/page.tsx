@@ -108,8 +108,8 @@ export default function TeklifAlPage() {
       >
         <div className="container-custom flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            {settings.logoLight ? (
-              <img src={settings.logoLight} alt="Best Kapı" className="h-8 object-contain" />
+            {(settings.logoDark || settings.logoLight) ? (
+              <img src={settings.logoDark || settings.logoLight} alt="Best Kapı" className="h-8 object-contain" />
             ) : (
               <div className="flex items-center gap-2">
                 <div

@@ -3,10 +3,7 @@ import { Montserrat, Poppins } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import FloatingCTA from "@/components/FloatingCTA";
-import MobileBottomNav from "@/components/MobileBottomNav";
+import MainShell from "@/components/MainShell";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const montserrat = Montserrat({
@@ -167,11 +164,9 @@ export default function RootLayout({
           />
         </noscript>
         <ThemeProvider>
-          <Navbar />
-          <main className="flex-1 pb-16 lg:pb-0">{children}</main>
-          <Footer />
-          <FloatingCTA />
-          <MobileBottomNav />
+          <MainShell>
+            {children}
+          </MainShell>
           <ServiceWorkerRegister />
         </ThemeProvider>
 

@@ -14,6 +14,8 @@ import {
   Award,
   Truck,
   ArrowRight,
+  X,
+  ZoomIn,
 } from "lucide-react";
 import { useSettings } from "@/lib/useSettings";
 import { trackWhatsApp, trackPhone } from "@/lib/analytics";
@@ -35,6 +37,7 @@ export default function TeklifAlPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [gallery, setGallery] = useState<{ id: number; src: string; alt: string }[]>([]);
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
 
   useEffect(() => {
     fetch("/api/products")
@@ -299,11 +302,12 @@ export default function TeklifAlPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {gallery.map((item) => (
-                <div
+                <button
                   key={item.id}
-                  className="group relative rounded-2xl overflow-hidden"
+                  onClick={() => setLightbox({ src: item.src, alt: item.alt })}
+                  className="group relative rounded-2xl overflow-hidden text-left cursor-pointer"
                   style={{
                     aspectRatio: "4/3",
                     background: "var(--bg-card)",
@@ -315,17 +319,18 @@ export default function TeklifAlPage() {
                     alt={item.alt || "Montaj örneği"}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 640px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
-                  <div
-                    className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
-                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ZoomIn className="w-4 h-4 text-white" />
+                  </div>
                   {item.alt && (
-                    <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <p className="text-xs text-white font-semibold truncate">{item.alt}</p>
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <p className="text-sm text-white font-semibold drop-shadow-lg">{item.alt}</p>
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -642,6 +647,39 @@ export default function TeklifAlPage() {
           </div>
         </div>
       </section>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center"
+          style={{ background: "rgba(0,0,0,0.92)" }}
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            onClick={() => setLightbox(null)}
+            className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+          >
+            <X className="w-5 h-5 text-white" />
+          </button>
+          {lightbox.alt && (
+            <div className="absolute bottom-6 left-0 right-0 text-center z-10">
+              <p className="text-sm text-white/80 font-semibold">{lightbox.alt}</p>
+            </div>
+          )}
+          <div
+            className="w-full h-full"
+            style={{ touchAction: "pinch-zoom" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={lightbox.src}
+              alt={lightbox.alt || "Örnek çalışma"}
+              className="w-full h-full object-contain select-none"
+              draggable={false}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Sticky Mobile CTA */}
       <div

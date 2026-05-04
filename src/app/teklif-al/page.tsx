@@ -34,6 +34,7 @@ export default function TeklifAlPage() {
   )}`;
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [gallery, setGallery] = useState<{ id: number; src: string; alt: string }[]>([]);
 
   useEffect(() => {
     fetch("/api/products")
@@ -42,6 +43,11 @@ export default function TeklifAlPage() {
         const steelDoors = data.filter((p: Product) => p.category === "celik-kapi");
         setProducts(steelDoors.slice(0, 6));
       })
+      .catch(() => {});
+
+    fetch("/api/gallery")
+      .then((r) => r.json())
+      .then((data) => setGallery(data.slice(0, 6)))
       .catch(() => {});
   }, []);
 
@@ -275,6 +281,52 @@ export default function TeklifAlPage() {
               >
                 Tüm modelleri görüntüle <ArrowRight className="w-4 h-4" />
               </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Örnek Çalışmalar */}
+      {gallery.length > 0 && (
+        <section style={{ padding: "48px 0", background: "var(--bg-primary)" }}>
+          <div className="container-custom" style={{ padding: "0 24px" }}>
+            <div className="text-center" style={{ marginBottom: "32px" }}>
+              <h2 className="font-serif text-2xl md:text-3xl font-extrabold text-[var(--text-primary)]" style={{ marginBottom: "8px" }}>
+                Örnek <span className="text-gold">Çalışmalarımız</span>
+              </h2>
+              <p className="text-sm text-[var(--text-muted)]">
+                Montajını yaptığımız kapılardan bazıları
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              {gallery.map((item) => (
+                <div
+                  key={item.id}
+                  className="group relative rounded-2xl overflow-hidden"
+                  style={{
+                    aspectRatio: "4/3",
+                    background: "var(--bg-card)",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <Image
+                    src={item.src}
+                    alt={item.alt || "Montaj örneği"}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 640px) 50vw, 33vw"
+                  />
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                  />
+                  {item.alt && (
+                    <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <p className="text-xs text-white font-semibold truncate">{item.alt}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </section>

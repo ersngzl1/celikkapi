@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import {
   Phone,
   Shield,
@@ -11,15 +13,37 @@ import {
   Clock,
   Award,
   Truck,
+  ArrowRight,
 } from "lucide-react";
 import { useSettings } from "@/lib/useSettings";
 import { trackWhatsApp, trackPhone } from "@/lib/analytics";
+
+interface Product {
+  id: number;
+  name: string;
+  slug: string;
+  series: string;
+  image: string;
+  category: string;
+}
 
 export default function TeklifAlPage() {
   const { settings } = useSettings();
   const waLink = `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(
     "Merhaba, çelik kapı fiyat teklifi almak istiyorum."
   )}`;
+
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((data) => {
+        const steelDoors = data.filter((p: Product) => p.category === "celik-kapi");
+        setProducts(steelDoors.slice(0, 6));
+      })
+      .catch(() => {});
+  }, []);
 
   const [form, setForm] = useState({ name: "", phone: "", doorType: "", note: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -201,6 +225,60 @@ export default function TeklifAlPage() {
           </div>
         </div>
       </section>
+
+      {/* Products Showcase */}
+      {products.length > 0 && (
+        <section style={{ padding: "48px 0 0", background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)" }}>
+          <div className="container-custom" style={{ padding: "0 24px 48px" }}>
+            <div className="text-center" style={{ marginBottom: "32px" }}>
+              <h2 className="font-serif text-2xl md:text-3xl font-extrabold text-[var(--text-primary)]" style={{ marginBottom: "8px" }}>
+                Çelik Kapı <span className="text-gold">Modellerimiz</span>
+              </h2>
+              <p className="text-sm text-[var(--text-muted)]">
+                TSE, CE ve ISO 9001 belgeli, profesyonel montaj dahil
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              {products.map((door) => (
+                <div
+                  key={door.id}
+                  className="group relative rounded-2xl overflow-hidden"
+                  style={{
+                    background: "var(--bg-card)",
+                    border: "1px solid var(--border)",
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  <div className="relative" style={{ aspectRatio: "3/4", padding: "12px" }}>
+                    <Image
+                      src={door.image}
+                      alt={door.name}
+                      fill
+                      className="object-contain transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 50vw, 33vw"
+                    />
+                  </div>
+                  <div style={{ padding: "12px 16px 16px" }}>
+                    <p className="text-sm font-bold text-[var(--text-primary)] truncate">{door.name}</p>
+                    <p className="text-xs text-[var(--text-muted)]">{door.series}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center" style={{ marginTop: "24px" }}>
+              <Link
+                href="/celik-kapi"
+                className="inline-flex items-center gap-2 text-sm font-bold transition-colors"
+                style={{ color: "var(--gold)" }}
+              >
+                Tüm modelleri görüntüle <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Form + Reviews */}
       <section
